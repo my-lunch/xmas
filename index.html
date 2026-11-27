@@ -127,7 +127,7 @@
       <!-- 4 階段切換按鈕 -->
       <div class="grid grid-cols-2 gap-2">
         <button data-set-phase="1" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">1️⃣ 轉盤抽號與寫提示</button>
-        <button data-set-phase="2" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">2️⃣ 滾輪機抽禮物</button>
+        <button data-set-phase="2" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">2️⃣ 大樂透機抽禮物</button>
         <button data-set-phase="3" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">3️⃣ 大開箱登記禮物</button>
         <button data-set-phase="4" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">4️⃣ 不記名投最爛禮物</button>
       </div>
@@ -171,7 +171,7 @@
     <section id="myStatusCard" class="hidden rounded-2xl bg-emerald-950/95 border border-[#d4af37]/60 p-4 shadow-lg space-y-3">
       <div class="flex items-center justify-between gap-3">
         <div class="space-y-1">
-          <p class="text-xs text-emerald-200/80">你送出的禮物</p>
+          <p class="text-xs text-emerald-200/80">你送出的禮物編號</p>
           <p class="text-xl font-black text-[#f7e7b4] flex items-baseline gap-2.5">
             <span id="myOwnNumberText"></span>
             <span id="myOwnNameText" class="text-lg font-bold text-white"></span>
@@ -205,7 +205,7 @@
 
         <!-- 頂部標籤列 -->
         <div class="relative z-10 flex items-center justify-between">
-          <span class="px-3 py-1 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/50 text-[#f7e7b4] text-xs font-bold">🎰 聖誕大樂透開獎機</span>
+          <span class="px-3 py-1 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/50 text-[#f7e7b4] text-xs font-bold">🎱 聖誕大樂透開獎機</span>
           <span id="topRedrawStatusBadge" class="text-xs font-bold text-emerald-200/90">每人限重抽 1 次</span>
         </div>
 
@@ -215,30 +215,30 @@
           <p id="lotterySubHeading" class="text-xs text-emerald-200/85">已自動排除你自己送的禮物</p>
         </div>
 
-        <!-- 抽出的神祕禮物提示卡（彈出在滾輪機上方，與下方滾輪機完全不重疊） -->
+        <!-- 抽出的神祕禮物提示卡（第一次抽完固定顯示兩個按鈕；第二次抽完只顯示一個按鈕） -->
         <div id="lotteryDecisionBox" class="hidden relative z-10 space-y-4 pb-1">
           <div class="card-pop mx-auto max-w-xs rounded-2xl bg-gradient-to-b from-[#fef9c3] via-[#fcfaf5] to-[#f3e8c8] border-4 border-[#d4af37] p-5 shadow-2xl space-y-2.5">
             <span class="inline-block px-3 py-0.5 rounded-full bg-[#991b1b] text-[#f7e7b4] text-xs font-black tracking-widest">掉出神祕禮物球</span>
             <p id="drawnHintText" class="text-2xl sm:text-3xl font-black text-stone-900 leading-snug py-1.5 break-words"></p>
-            <div class="text-xs font-bold text-amber-800">要收下這份禮物，還是丟回滾輪重抽？</div>
+            <div id="decisionSubPrompt" class="text-xs font-bold text-amber-800">要收下這份禮物，還是再抽一次？</div>
           </div>
           <div id="decisionButtonsRow" class="grid grid-cols-2 gap-3">
-            <button id="redrawBtn" class="py-3.5 px-3 rounded-2xl bg-white/15 border border-white/40 text-white font-black text-sm btn-press">🔄 丟回重抽</button>
+            <button id="redrawBtn" class="py-3.5 px-3 rounded-2xl bg-white/15 border border-white/40 text-white font-black text-sm btn-press">🔄 再抽一次</button>
             <button id="confirmTicketBtn" class="py-3.5 px-3 rounded-2xl bg-gradient-to-r from-[#dc2626] to-[#991b1b] border border-[#f7e7b4] text-white font-black text-base shadow-lg btn-press">✨ 就決定是它！</button>
           </div>
         </div>
 
-        <!-- 大樂透滾輪開獎機 Canvas 舞台（丟回重抽時依然完整保留在畫面上） -->
+        <!-- 大樂透滾輪開獎機 Canvas 舞台（再抽一次時完整保留在畫面上） -->
         <div id="lottoMachineStage" class="relative z-10 space-y-4">
           <div class="w-full max-w-[300px] mx-auto flex items-center justify-center">
             <canvas id="lottoCanvas" class="w-[300px] h-[280px] max-w-full block"></canvas>
           </div>
           <button id="drawTicketBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#f7e7b4] via-[#d4af37] to-[#b48a28] text-emerald-950 text-lg font-black shadow-xl btn-press tracking-wide">
-            🎰 啟動滾輪抽禮物！
+            🎱 啟動大樂透機抽禮物！
           </button>
         </div>
 
-        <!-- 已抽定結果（乾淨俐落的高對比紅金實體卡片，無多餘半透明框） -->
+        <!-- 已抽定結果（乾淨俐落的實體紅金卡片，無多餘半透明框） -->
         <div id="lotteryResultBox" class="hidden relative z-10 space-y-4 py-3">
           <p class="text-sm font-black text-[#f7e7b4]">🎉 抽獎完成！請領取你的聖誕禮物</p>
           <div class="mx-auto max-w-[230px] py-6 px-6 rounded-2xl bg-[#991b1b] border-4 border-[#d4af37] text-[#fcfaf5] shadow-2xl">
@@ -251,7 +251,7 @@
 
       <!-- 全場抽取進度即時同步 -->
       <div class="rounded-2xl bg-black/30 border border-white/15 p-3.5 space-y-2">
-        <p id="poolRemainText" class="text-xs text-center text-[#f7e7b4] font-bold">滾輪機剩餘 20 顆有效禮物球</p>
+        <p id="poolRemainText" class="text-xs text-center text-[#f7e7b4] font-bold">開獎機剩餘 20 顆禮物球</p>
         <div id="drawProgressChips" class="flex flex-wrap justify-center gap-1.5"></div>
       </div>
     </section>
@@ -280,7 +280,7 @@
         <button id="modalCloseBtn" class="w-8 h-8 rounded-full bg-stone-200 text-stone-700 font-bold">✕</button>
       </div>
 
-      <!-- 你的禮物提示（介面不放任何字數限制提示，送出不足 6 字時直接跳出紅字提醒） -->
+      <!-- 你的禮物提示（介面不放任何字數提示，送出不足 6 字時直接跳出紅字提醒） -->
       <div id="modalHintFields" class="space-y-2">
         <div>
           <label class="block text-xs font-bold text-stone-600 mb-1.5">你的禮物提示</label>
@@ -319,7 +319,7 @@
     </div>
   </div>
 
-  <!-- 自訂二次確認視窗（取代瀏覽器原生 confirm） -->
+  <!-- 自訂二次確認視窗 -->
   <div id="confirmModal" class="hidden fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4">
     <div class="card-ivory w-full max-w-xs rounded-3xl p-5 space-y-4 text-center border-2 border-[#d4af37]">
       <div class="text-2xl">⚠️</div>
@@ -331,7 +331,7 @@
     </div>
   </div>
 
-  <!-- 雲端連線診斷視窗（點擊單機模式燈號時開啟） -->
+  <!-- 雲端連線診斷視窗 -->
   <div id="syncInfoModal" class="hidden fixed inset-0 z-[65] bg-black/80 flex items-center justify-center p-4">
     <div class="card-ivory w-full max-w-sm rounded-3xl p-5 space-y-4 border-2 border-[#d4af37]">
       <div class="flex items-center justify-between border-b border-stone-200 pb-2.5">
@@ -391,7 +391,7 @@
 
     // 全站統一縮小 # 符號，維持數字與中文清晰放大
     function fmtNum(id, hashSizeClass = "text-[10px]") {
-      return `<span class="${hashSizeClass} opacity-70 font-bold mr-0.5">#</span>${id}`;
+      return `<span class="${hashSizeClass} opacity-75 font-bold mr-0.5">#</span>${id}`;
     }
 
     function escapeHtml(str) {
@@ -399,7 +399,7 @@
     }
 
     // ==================== 連線狀態指示燈 ====================
-    let syncStatus = "connecting"; // "connecting" | "cloud" | "local"
+    let syncStatus = "connecting";
     let lastFirebaseError = "";
 
     function updateSyncPill(status, errMsg = "") {
@@ -427,7 +427,7 @@
         titleEl.textContent = "🟢 雲端同步正常運作中";
         bodyEl.innerHTML = `
           <p>已成功連線至 Firebase 雲端資料庫（<strong>xmas-2026-6f875</strong>）。</p>
-          <p>所有人的轉盤抽號、禮物提示、滾輪抽獎與投票皆會即時同步，不會重複撞號。</p>
+          <p>所有人的轉盤抽號、禮物提示、大樂透抽獎與投票皆會即時同步，不會重複撞號。</p>
         `;
       } else if (syncStatus === "local") {
         titleEl.textContent = "🔴 目前為單機模式（無法跨手機同步）";
@@ -438,7 +438,7 @@
           <p class="font-bold text-stone-900">請到 Firebase Console 確認以下兩項設定：</p>
           <ol class="list-decimal pl-4 space-y-1">
             <li><strong>Authentication → Sign-in method</strong>：開啟「<strong>匿名（Anonymous）</strong>」登入。</li>
-            <li><strong>Firestore Database → 規則（Rules）</strong>：確認已建立資料庫並開啟測試模式讀寫權限（到期日需晚於活動日期）。</li>
+            <li><strong>Firestore Database → 規則（Rules）</strong>：確認已建立資料庫並發布讀寫規則。</li>
           </ol>
         `;
       } else {
@@ -573,7 +573,6 @@
       renderAll();
     }
 
-    // 使用 Firestore Transaction 確保多人同時操作絕不撞號
     async function mutateRoom(updaterFn) {
       if (useLocalFallback) {
         const res = updaterFn(state);
@@ -617,7 +616,7 @@
       mode: "idle", // "idle" | "spinning" | "dropping" | "returning"
       balls: [],
       sparkles: [],
-      dropBall: { active: false, y: 196, vy: 0, glow: 0 },
+      dropBall: { active: false, y: 196, vy: 0 },
       rafId: null,
       initialized: false,
 
@@ -632,7 +631,7 @@
         this.canvas.height = this.height * dpr;
         this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        // 建立 18 顆立體彩色樂透球
+        // 建立 18 顆立體彩色編號樂透球
         const palette = [
           { base: "#dc2626", dark: "#7f1d1d", light: "#fca5a5" }, // 紅
           { base: "#eab308", dark: "#854d0e", light: "#fef08a" }, // 金
@@ -640,7 +639,6 @@
           { base: "#f5f5f4", dark: "#a8a29e", light: "#ffffff" }, // 珍珠白
           { base: "#f59e0b", dark: "#92400e", light: "#fde68a" }  // 琥珀金
         ];
-        const symbols = ["?", "★", "?", "❄", "?"];
         this.balls = [];
         for (let i = 0; i < 18; i++) {
           const angle = Math.random() * Math.PI * 2;
@@ -653,7 +651,7 @@
             vy: (Math.random() - 0.5) * 1.2,
             r: 11.5,
             col,
-            sym: symbols[i % symbols.length]
+            label: String(i + 1)
           });
         }
         this.initialized = true;
@@ -664,12 +662,10 @@
         this.mode = newMode;
         if (newMode === "spinning") {
           this.dropBall.active = false;
-          // 給球體強力初速度開始翻滾
           this.balls.forEach(b => {
             b.vx = (Math.random() - 0.5) * 13;
             b.vy = -4 - Math.random() * 9;
           });
-          // 產生金色星塵火花
           this.sparkles = [];
           for (let i = 0; i < 18; i++) {
             const a = Math.random() * Math.PI * 2;
@@ -682,12 +678,12 @@
             });
           }
         } else if (newMode === "dropping") {
-          this.dropBall = { active: true, y: this.cy + this.drumR - 4, vy: 1.5, glow: 1 };
+          this.dropBall = { active: true, y: this.cy + this.drumR - 4, vy: 1.5 };
         } else if (newMode === "returning") {
-          this.dropBall = { active: true, y: 248, vy: -5.5, glow: 0.8 };
+          this.dropBall = { active: true, y: 248, vy: -5.5 };
           this.balls.forEach(b => {
-            b.vx = (Math.random() - 0.5) * 7;
-            b.vy = -2 - Math.random() * 5;
+            b.vx = (Math.random() - 0.5) * 8;
+            b.vy = -3 - Math.random() * 5;
           });
         } else {
           this.dropBall.active = false;
@@ -699,9 +695,8 @@
         const isFast = this.mode === "spinning";
         const isRet = this.mode === "returning";
 
-        // 滾輪與搖臂轉速
-        this.drumAngle += isFast ? 0.14 : (isRet ? -0.09 : 0.012);
-        this.crankAngle += isFast ? 0.28 : (isRet ? -0.18 : 0.016);
+        this.drumAngle += isFast ? 0.14 : (isRet ? -0.1 : 0.012);
+        this.crankAngle += isFast ? 0.28 : (isRet ? -0.2 : 0.016);
 
         const maxR = this.drumR - 14;
         const gravity = isFast ? 0.28 : 0.22;
@@ -711,7 +706,6 @@
           b.vy += gravity;
 
           if (isFast) {
-            // 高速旋轉氣流與攪拌推力
             const dx = b.x - this.cx;
             const dy = b.y - this.cy;
             b.vx += -dy * 0.009 + (Math.random() - 0.5) * 1.4;
@@ -719,12 +713,11 @@
             b.vx *= 0.985;
             b.vy *= 0.985;
           } else if (isRet) {
-            b.vx += (Math.random() - 0.5) * 0.8;
-            b.vy += (Math.random() - 0.5) * 0.8;
+            b.vx += (Math.random() - 0.5) * 0.9;
+            b.vy += (Math.random() - 0.5) * 0.9;
             b.vx *= 0.96;
             b.vy *= 0.96;
           } else {
-            // 待機時輕微被緩慢轉動的滾輪帶動，在底部自然滾動
             b.vx *= 0.93;
             b.vy *= 0.93;
           }
@@ -732,7 +725,6 @@
           b.x += b.vx;
           b.y += b.vy;
 
-          // 圓形滾輪內壁碰撞
           const dx = b.x - this.cx;
           const dy = b.y - this.cy;
           const dist = Math.hypot(dx, dy);
@@ -745,14 +737,12 @@
             const bounce = isFast ? 0.82 : 0.35;
             b.vx -= (1 + bounce) * dot * nx;
             b.vy -= (1 + bounce) * dot * ny;
-            // 滾輪內壁切線摩擦力（待機時輕微帶動球體）
             const tang = isFast ? 1.4 : 0.16;
             b.vx += -ny * tang;
             b.vy += nx * tang;
           }
         }
 
-        // 球與球之間的簡易彈性碰撞
         for (let i = 0; i < this.balls.length; i++) {
           for (let j = i + 1; j < this.balls.length; j++) {
             const a = this.balls[i], b = this.balls[j];
@@ -775,7 +765,6 @@
           }
         }
 
-        // 掉出球與回收球物理
         if (this.dropBall.active) {
           if (this.mode === "dropping") {
             this.dropBall.vy += 0.48;
@@ -793,14 +782,13 @@
           }
         }
 
-        // 更新星塵閃爍
         this.sparkles.forEach(s => {
           s.alpha += s.speed;
           if (s.alpha > 1 || s.alpha < 0.1) s.speed *= -1;
         });
       },
 
-      drawBall(ctx, x, y, r, col, sym, isGoldenDrop = false) {
+      drawBall(ctx, x, y, r, col, label, isGoldenDrop = false) {
         ctx.save();
         if (isGoldenDrop) {
           ctx.shadowColor = "rgba(250, 204, 21, 0.9)";
@@ -816,19 +804,17 @@
         ctx.fillStyle = grad;
         ctx.fill();
 
-        // 球面高光
         ctx.beginPath();
         ctx.ellipse(x - r * 0.3, y - r * 0.32, r * 0.28, r * 0.16, -0.6, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(255,255,255,0.65)";
         ctx.fill();
 
-        // 球心符號
         ctx.shadowBlur = 0;
         ctx.fillStyle = col.base === "#f5f5f4" ? "#991b1b" : "#ffffff";
-        ctx.font = `900 ${Math.round(r * 0.95)}px 'Noto Sans TC', sans-serif`;
+        ctx.font = `900 ${Math.round(r * 0.88)}px 'Noto Sans TC', sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(sym, x, y + 1);
+        ctx.fillText(label, x, y + 0.5);
         ctx.restore();
       },
 
@@ -879,10 +865,8 @@
         const handleY = Math.sin(this.crankAngle) * 24;
         ctx.lineTo(handleX, handleY);
         ctx.stroke();
-        // 搖臂中心軸
         ctx.fillStyle = "#d4af37";
         ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fill();
-        // 握把紅球
         ctx.fillStyle = "#dc2626";
         ctx.beginPath(); ctx.arc(handleX, handleY, 8, 0, Math.PI * 2); ctx.fill();
         ctx.strokeStyle = "#fef08a";
@@ -891,13 +875,11 @@
         ctx.restore();
 
         // 4. 滾輪機底部紅金底座與出球滑槽
-        // 底座陰影
         ctx.fillStyle = "rgba(0,0,0,0.4)";
         ctx.beginPath();
         ctx.ellipse(cx, 266, 92, 10, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // 紅金機械底座
         const baseGrad = ctx.createLinearGradient(cx - 82, 224, cx + 82, 262);
         baseGrad.addColorStop(0, "#7f1d1d");
         baseGrad.addColorStop(0.5, "#b91c1c");
@@ -910,11 +892,10 @@
         ctx.lineWidth = 2.5;
         ctx.stroke();
 
-        // 底座飾條
         ctx.fillStyle = "#f7e7b4";
         ctx.fillRect(cx - 64, 232, 128, 3);
 
-        // 出球滑槽管口（從滾輪底部接到托盤）
+        // 出球滑槽
         ctx.fillStyle = "#450a0a";
         ctx.strokeStyle = "#d4af37";
         ctx.lineWidth = 2.5;
@@ -923,7 +904,7 @@
         ctx.fill();
         ctx.stroke();
 
-        // 接球金色托盤口
+        // 接球金色托盤
         ctx.fillStyle = "#1c1917";
         ctx.beginPath();
         ctx.ellipse(cx, 250, 26, 10, 0, 0, Math.PI * 2);
@@ -942,7 +923,7 @@
         ctx.fillStyle = glassBg;
         ctx.fill();
 
-        // 6. 滾輪內部金屬旋轉葉片（背景層）
+        // 6. 滾輪內部金屬旋轉葉片
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(this.drumAngle);
@@ -957,9 +938,9 @@
         }
         ctx.restore();
 
-        // 7. 繪製所有滾動中的彩色樂透球
+        // 7. 繪製滾動中的 18 顆彩色編號球
         for (const b of this.balls) {
-          this.drawBall(ctx, b.x, b.y, b.r, b.col, b.sym, false);
+          this.drawBall(ctx, b.x, b.y, b.r, b.col, b.label, false);
         }
 
         // 8. 玻璃球體前方反光與金屬外環
@@ -974,7 +955,6 @@
         ctx.lineWidth = 7;
         ctx.stroke();
 
-        // 玻璃弧形高光
         ctx.beginPath();
         ctx.arc(cx, cy, R - 10, -Math.PI * 0.82, -Math.PI * 0.42);
         ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
@@ -982,7 +962,6 @@
         ctx.lineCap = "round";
         ctx.stroke();
 
-        // 中心金屬軸帽
         ctx.beginPath();
         ctx.arc(cx, cy, 11, 0, Math.PI * 2);
         ctx.fillStyle = rimGrad;
@@ -1036,7 +1015,7 @@
 
       const phaseNames = {
         1: "階段 1｜轉盤抽號與寫提示",
-        2: "階段 2｜滾輪機抽禮物",
+        2: "階段 2｜大樂透機抽禮物",
         3: "階段 3｜大開箱登記禮物",
         4: "階段 4｜不記名投最爛禮物"
       };
@@ -1072,13 +1051,13 @@
       } else {
         wheelCard.classList.add("hidden");
         myStatusCard.classList.remove("hidden");
-        document.getElementById("myOwnNumberText").innerHTML = fmtNum(me.ownSlotId, "text-xs");
+        document.getElementById("myOwnNumberText").innerHTML = fmtNum(me.ownSlotId, "text-[10px]");
         document.getElementById("myOwnNameText").textContent = me.name;
 
         const wonBadgeBox = document.getElementById("myWonBadgeBox");
         if (me.wonSlotId) {
           wonBadgeBox.classList.remove("hidden");
-          document.getElementById("myWonNumberTopText").innerHTML = fmtNum(me.wonSlotId, "text-xs");
+          document.getElementById("myWonNumberTopText").innerHTML = fmtNum(me.wonSlotId, "text-[10px]");
         } else {
           wonBadgeBox.classList.add("hidden");
         }
@@ -1101,8 +1080,8 @@
           editReceivedBtn.classList.remove("hidden");
           const wonSlot = state.slots[me.wonSlotId];
           editReceivedBtn.textContent = wonSlot && wonSlot.gift
-            ? `修改收到的禮物內容 ${me.wonSlotId} 號`
-            : `🎁 請填寫收到的禮物內容`;
+            ? `修改收到的禮物內容（${me.wonSlotId} 號）`
+            : `🎁 請填寫收到的禮物內容（${me.wonSlotId} 號）`;
         }
       }
 
@@ -1171,7 +1150,7 @@
         ctx.fillText(slot.id, radius - 16, 0);
         const numWidth = ctx.measureText(slot.id).width;
         ctx.font = "700 8px 'Noto Sans TC', sans-serif";
-        ctx.fillStyle = "rgba(252, 250, 245, 0.7)";
+        ctx.fillStyle = "rgba(252, 250, 245, 0.72)";
         ctx.fillText("#", radius - 16 - numWidth - 1, 1);
         ctx.restore();
       });
@@ -1244,16 +1223,23 @@
       }).join("");
     }
 
-    // ==================== 6. 階段 2：滾輪開獎機抽禮物 ====================
+    // ==================== 6. 階段 2：大樂透開獎機抽禮物 ====================
+    // 優先排除自己送的禮物與未領取空號；若為單人測試環境（尚無其他人報到），優雅退回未抽號碼以利測試
     function getValidLotteryPool(slotArr, me) {
       const activeUndrawn = slotArr.filter(s => s.giverId && !s.drawnBy);
-      if (!me) return activeUndrawn;
-      return activeUndrawn.filter(s => s.id !== me.ownSlotId);
+      const others = me ? activeUndrawn.filter(s => s.id !== me.ownSlotId) : activeUndrawn;
+      if (others.length > 0) return others;
+
+      const anyUndrawn = slotArr.filter(s => !s.drawnBy);
+      const anyOtherUndrawn = me ? anyUndrawn.filter(s => s.id !== me.ownSlotId) : anyUndrawn;
+      return anyOtherUndrawn.length > 0 ? anyOtherUndrawn : anyUndrawn;
     }
 
     function renderPhase2Lottery(slotArr, me) {
-      const remainingActive = slotArr.filter(s => s.giverId && !s.drawnBy);
-      document.getElementById("poolRemainText").textContent = `滾輪機剩餘 ${remainingActive.length} 顆有效禮物球`;
+      const activeUndrawn = slotArr.filter(s => s.giverId && !s.drawnBy);
+      const displayRemain = activeUndrawn.length > 0 ? activeUndrawn.length : slotArr.filter(s => !s.drawnBy).length;
+      document.getElementById("poolRemainText").textContent = `開獎機剩餘 ${displayRemain} 顆禮物球`;
+
       document.getElementById("drawProgressChips").innerHTML = Object.values(state.users).filter(u => u.wonSlotId).map(u =>
         `<span class="px-2.5 py-1 rounded-lg bg-white/10 text-[#f7e7b4] text-xs font-bold">✓ ${escapeHtml(u.name)}</span>`
       ).join("");
@@ -1262,16 +1248,17 @@
       const mainHeading = document.getElementById("lotteryMainHeading");
       const subHeading = document.getElementById("lotterySubHeading");
       const decisionBox = document.getElementById("lotteryDecisionBox");
+      const decisionSubPrompt = document.getElementById("decisionSubPrompt");
       const machineStage = document.getElementById("lottoMachineStage");
       const resultBox = document.getElementById("lotteryResultBox");
       const drawBtn = document.getElementById("drawTicketBtn");
 
-      const validPool = getValidLotteryPool(slotArr, me);
-      const canRedraw = !(me && me.redrawUsed) && validPool.length > 1;
-      document.getElementById("topRedrawStatusBadge").textContent = (me && me.redrawUsed) ? "重抽機會已使用" : "每人限重抽 1 次";
+      // 關鍵重抽規則：只要尚未用過重抽 (!me.redrawUsed)，第一次抽完就一律顯示雙按鈕
+      const hasUsedRedraw = Boolean(me && me.redrawUsed);
+      document.getElementById("topRedrawStatusBadge").textContent = hasUsedRedraw ? "重抽機會已使用" : "每人限重抽 1 次";
 
       if (me && me.wonSlotId && state.slots[me.wonSlotId]) {
-        // 已確定抽中：隱藏滾輪與決策卡，顯示乾淨俐落的高對比實體號碼卡
+        // 已確認抽定：顯示乾淨俐落的紅金實體卡片
         headerBlock.classList.add("hidden");
         decisionBox.classList.add("hidden");
         machineStage.classList.add("hidden");
@@ -1279,58 +1266,65 @@
         document.getElementById("finalWonNumber").innerHTML = fmtNum(me.wonSlotId, "text-base");
         document.getElementById("finalWonHint").textContent = `提示：「${state.slots[me.wonSlotId].hint || '神祕禮物'}」`;
       } else if (tempCandidateSlotId && state.slots[tempCandidateSlotId]) {
-        // 剛抽出一顆候選球：上方彈出提示卡，下方保留滾輪機
+        // 剛抽出一顆候選球：上方彈出提示卡，下方保留開獎機
         headerBlock.classList.add("hidden");
         decisionBox.classList.remove("hidden");
         machineStage.classList.remove("hidden");
         drawBtn.classList.add("hidden");
         resultBox.classList.add("hidden");
-        document.getElementById("drawnHintText").textContent = `「${state.slots[tempCandidateSlotId].hint || '未填寫提示'}」`;
+
+        document.getElementById("drawnHintText").textContent = `「${state.slots[tempCandidateSlotId].hint || '神祕禮物'}」`;
 
         const redrawBtn = document.getElementById("redrawBtn");
         const row = document.getElementById("decisionButtonsRow");
-        redrawBtn.classList.toggle("hidden", !canRedraw);
-        row.classList.toggle("grid-cols-2", canRedraw);
-        row.classList.toggle("grid-cols-1", !canRedraw);
+
+        if (!hasUsedRedraw) {
+          // 第一次抽完：永遠顯示「🔄 再抽一次」與「✨ 就決定是它！」兩個並排按鈕
+          decisionSubPrompt.textContent = "要收下這份禮物，還是再抽一次？";
+          redrawBtn.classList.remove("hidden");
+          row.classList.remove("grid-cols-1");
+          row.classList.add("grid-cols-2");
+        } else {
+          // 第二次抽完：只顯示單一全寬「✨ 就決定是它！」按鈕
+          decisionSubPrompt.textContent = "這是你的最終禮物球！請點擊下方按鈕確認領取";
+          redrawBtn.classList.add("hidden");
+          row.classList.remove("grid-cols-2");
+          row.classList.add("grid-cols-1");
+        }
       } else {
-        // 待機 / 丟回重抽後準備再轉一次
+        // 待機狀態 或 剛按完「再抽一次」準備轉第二次
         headerBlock.classList.remove("hidden");
         decisionBox.classList.add("hidden");
         machineStage.classList.remove("hidden");
         drawBtn.classList.remove("hidden");
         resultBox.classList.add("hidden");
-        if (me && me.redrawUsed) {
+
+        if (hasUsedRedraw) {
           mainHeading.textContent = "已丟回滾輪！請再轉一次";
           subHeading.textContent = "這是最後一次機會，轉出後即為最終禮物";
-          drawBtn.textContent = "🎰 再轉一次滾輪（最後機會）！";
+          drawBtn.textContent = "🎱 再轉一次開獎機！";
         } else {
           mainHeading.textContent = "轉動滾輪抽出聖誕禮物";
           subHeading.textContent = "已自動排除你自己送的禮物";
-          drawBtn.textContent = "🎰 啟動滾輪抽禮物！";
+          drawBtn.textContent = "🎱 啟動大樂透機抽禮物！";
         }
       }
     }
 
-    // 啟動滾輪抽獎動畫
+    // 啟動大樂透開獎機抽獎動畫
     document.getElementById("drawTicketBtn").addEventListener("click", () => {
       if (isLottoRunning) return;
       const me = state.users[deviceId];
       if (!me) { showToast("請先輸入姓名並轉出你的禮物編號！"); return; }
       if (me.wonSlotId) { showToast("你已經抽過禮物囉，每人限抽一次！"); return; }
 
-      const allUndrawn = Object.values(state.slots).filter(s => s.giverId && !s.drawnBy);
       let pool = getValidLotteryPool(Object.values(state.slots), me);
-
       if (pool.length === 0) {
-        if (allUndrawn.length === 1 && allUndrawn[0].id === me.ownSlotId) {
-          showToast("目前全場只有你 1 人的禮物，請等其他同事加入才能避開自己喔！");
-        } else {
-          showToast("目前沒有可抽的禮物球囉！");
-        }
+        showToast("目前沒有可抽的禮物球囉！");
         return;
       }
 
-      // 重抽時避開剛丟回的那一顆球
+      // 第二次抽獎時，若還有其他可抽禮物，避開剛剛丟回的那一顆
       if (lastThrownSlotId && pool.length > 1) {
         pool = pool.filter(s => s.id !== lastThrownSlotId);
       }
@@ -1338,10 +1332,9 @@
       isLottoRunning = true;
       const btn = document.getElementById("drawTicketBtn");
       btn.disabled = true;
-      btn.textContent = "🎰 滾輪高速轉動中...";
+      btn.textContent = "🎱 滾輪高速轉動中...";
       lottoEngine.setMode("spinning");
 
-      // 旋轉約 1.35 秒後掉出金球，再過 0.45 秒彈出禮物提示卡
       setTimeout(() => {
         lottoEngine.setMode("dropping");
       }, 1350);
@@ -1354,14 +1347,16 @@
       }, 1850);
     });
 
-    // 丟回重抽：保留滾輪機，播放金球退回與滾動動畫
+    // 點擊「🔄 再抽一次」：標記已使用重抽、保留開獎機並播放回收攪動動畫
     document.getElementById("redrawBtn").addEventListener("click", async () => {
       const me = state.users[deviceId];
       if (!me || me.redrawUsed || isLottoRunning) return;
       isLottoRunning = true;
       lastThrownSlotId = tempCandidateSlotId;
 
-      await mutateRoom((data) => { if (data.users[deviceId]) data.users[deviceId].redrawUsed = true; });
+      await mutateRoom((data) => {
+        if (data.users[deviceId]) data.users[deviceId].redrawUsed = true;
+      });
 
       tempCandidateSlotId = null;
       lottoEngine.setMode("returning");
@@ -1374,7 +1369,7 @@
       }, 700);
     });
 
-    // 確定收下這份禮物（雲端交易鎖定）
+    // 點擊「✨ 就決定是它！」：雲端交易鎖定並放煙火
     document.getElementById("confirmTicketBtn").addEventListener("click", async () => {
       if (!tempCandidateSlotId || isLottoRunning) return;
       const targetId = tempCandidateSlotId;
@@ -1387,7 +1382,9 @@
           tempCandidateSlotId = null;
           return false;
         }
-        targetSlot.drawnBy = deviceId; targetSlot.drawnByName = user.name; user.wonSlotId = targetId;
+        targetSlot.drawnBy = deviceId;
+        targetSlot.drawnByName = user.name;
+        user.wonSlotId = targetId;
         return true;
       });
       if (ok) {
@@ -1407,7 +1404,7 @@
       const myWonSlotId = me ? me.wonSlotId : "";
       const myVotedSlotId = me ? me.votedSlotId : "";
 
-      const activeSlots = slotArr.filter(s => s.giverId);
+      const activeSlots = slotArr.filter(s => s.giverId || s.drawnBy);
       const displaySlots = activeSlots.length > 0 ? activeSlots : slotArr;
 
       document.getElementById("cardsGrid").innerHTML = displaySlots.map(slot => {
@@ -1488,7 +1485,7 @@
 
     function openHintModal(slotId) {
       currentEditSlotId = slotId;
-      document.getElementById("modalTitle").innerHTML = `${fmtNum(slotId, "text-xs")} 號 你的禮物提示`;
+      document.getElementById("modalTitle").innerHTML = `${fmtNum(slotId, "text-[10px]")} 號 你的禮物提示`;
       document.getElementById("modalHintFields").classList.remove("hidden");
       document.getElementById("modalGiftFields").classList.add("hidden");
       document.getElementById("hintErrorMsg").classList.add("hidden");
@@ -1498,7 +1495,7 @@
 
     window.openGiftModal = function(slotId) {
       currentEditSlotId = slotId;
-      document.getElementById("modalTitle").innerHTML = `${fmtNum(slotId, "text-xs")} 號 收到的禮物內容`;
+      document.getElementById("modalTitle").innerHTML = `${fmtNum(slotId, "text-[10px]")} 號 收到的禮物內容`;
       document.getElementById("modalHintFields").classList.add("hidden");
       document.getElementById("modalGiftFields").classList.remove("hidden");
       document.getElementById("giftErrorMsg").classList.add("hidden");
@@ -1514,7 +1511,7 @@
         const hintVal = document.getElementById("inputHint").value.trim();
         if (hintVal.length < 6) {
           const errEl = document.getElementById("hintErrorMsg");
-          errEl.textContent = `你的文字太少囉！請至少輸入 6 個字才能儲存（目前 ${hintVal.length} 字）`;
+          errEl.textContent = `字數太少囉！請至少輸入 6 個字才能儲存（目前 ${hintVal.length} 字）`;
           errEl.classList.remove("hidden");
           document.getElementById("inputHint").focus();
           return;
