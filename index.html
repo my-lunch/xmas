@@ -4,68 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>2026 久違了 聖誕交換禮物大會</title>
-  <!-- 防止 LINE 分享連結時自動抓取頁面隱藏的主辦人主控台文字 -->
+  <!-- LINE 分享預覽設定：防止抓取頁面隱藏文字 -->
   <meta property="og:title" content="2026 久違了 聖誕交換禮物大會" />
   <meta property="og:description" content=" " />
   <meta name="description" content=" " />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: radial-gradient(circle at 50% 0%, #174633 0%, #081c13 100%);
+      background: radial-gradient(circle at 50% 0%, #174633 0%, #071911 100%);
       color: #f8f6f0;
       min-height: 100vh;
       overflow-x: hidden;
     }
     .glass-panel {
-      background: rgba(11, 38, 27, 0.92);
+      background: rgba(10, 35, 25, 0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(212, 175, 55, 0.3);
     }
     .card-ivory {
       background: #fcfaf5;
       color: #1a2620;
-      box-shadow: 0 12px 30px -6px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 12px 30px -6px rgba(0, 0, 0, 0.42);
     }
     .btn-press { transition: transform 0.12s ease, opacity 0.15s ease; }
     .btn-press:active { transform: scale(0.96); }
 
-    /* 轉盤旋轉曲線 */
+    /* 幸運轉盤旋轉曲線 */
     #wheelCanvas {
       transition: transform 3.6s cubic-bezier(0.14, 0.86, 0.18, 1);
     }
 
-    /* 華麗搖籤筒動畫 */
-    @keyframes tubeShakeHard {
-      0%, 100% { transform: rotate(0deg) translateY(0); }
-      15% { transform: rotate(-10deg) translateY(-3px); }
-      30% { transform: rotate(10deg) translateY(-5px); }
-      45% { transform: rotate(-8deg) translateY(-2px); }
-      60% { transform: rotate(8deg) translateY(-4px); }
-      75% { transform: rotate(-4deg) translateY(-1px); }
-      90% { transform: rotate(4deg) translateY(0); }
-    }
-    .shaking-tube { animation: tubeShakeHard 0.55s ease-in-out infinite; }
-
-    /* 神祕竹籤向上彈出 */
-    @keyframes stickPopUp {
-      0% { transform: translateY(36px) scale(0.88); opacity: 0; }
-      65% { transform: translateY(-10px) scale(1.03); opacity: 1; }
+    /* 神祕禮物提示卡彈出動畫 */
+    @keyframes cardPopUp {
+      0% { transform: translateY(28px) scale(0.9); opacity: 0; }
+      65% { transform: translateY(-6px) scale(1.02); opacity: 1; }
       100% { transform: translateY(0) scale(1); opacity: 1; }
     }
-    .stick-pop { animation: stickPopUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .card-pop { animation: cardPopUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
     /* 金色光暈呼吸（僅用於門禁與轉盤外框） */
     @keyframes goldPulse {
-      0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.35); }
-      50% { box-shadow: 0 0 36px rgba(247, 231, 180, 0.65); }
+      0%, 100% { box-shadow: 0 0 18px rgba(212, 175, 55, 0.32); }
+      50% { box-shadow: 0 0 34px rgba(247, 231, 180, 0.65); }
     }
     .gold-glow { animation: goldPulse 2.4s ease-in-out infinite; }
 
-    /* 頂部浮動通知 */
+    /* 頂部浮動通知動畫 */
     @keyframes toastIn {
       from { opacity: 0; transform: translate(-50%, -12px); }
       to { opacity: 1; transform: translate(-50%, 0); }
@@ -96,17 +86,24 @@
   </div>
 
   <!-- ==================== 2. 主畫面頂部導覽列 ==================== -->
-  <header id="mainHeader" class="hidden sticky top-0 z-30 glass-panel px-4 py-3.5">
+  <header id="mainHeader" class="hidden sticky top-0 z-30 glass-panel px-4 py-3">
     <div class="max-w-lg mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-1.5 min-w-0">
         <h1 class="text-base sm:text-lg font-black tracking-wide text-[#f7e7b4] truncate">2026 久違了 聖誕交換禮物大會</h1>
-        <button id="hostTriggerBtn" title="主辦人主控台" class="text-base opacity-75 hover:opacity-100 p-1 select-none shrink-0">🌲</button>
+        <button id="hostTriggerBtn" title="主辦人主控台" class="text-base opacity-80 hover:opacity-100 p-1.5 select-none shrink-0">🌲</button>
       </div>
       <div id="myUserBadge" class="hidden shrink-0 text-xs font-bold px-2.5 py-1 rounded-full bg-[#d4af37]/20 text-[#f7e7b4] border border-[#d4af37]/40"></div>
     </div>
-    <div class="max-w-lg mx-auto mt-2.5 flex items-center justify-between text-xs bg-black/35 rounded-xl px-3.5 py-2 border border-white/10">
-      <span id="phaseBadge" class="font-bold text-[#f7e7b4]">階段 1｜轉盤抽號與寫提示</span>
-      <span id="statusCounter" class="text-emerald-200/80">載入中...</span>
+
+    <!-- 階段進度與即時雲端連線燈號 -->
+    <div class="max-w-lg mx-auto mt-2 flex items-center justify-between gap-2 text-xs bg-black/35 rounded-xl px-3 py-2 border border-white/10">
+      <span id="phaseBadge" class="font-bold text-[#f7e7b4] truncate">階段 1｜轉盤抽號與寫提示</span>
+      <div class="flex items-center gap-2 shrink-0">
+        <span id="statusCounter" class="text-emerald-200/85 font-medium">載入中...</span>
+        <button id="syncStatusPill" type="button" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-200 border border-amber-400/40 transition">
+          🟡 連線中...
+        </button>
+      </div>
     </div>
   </header>
 
@@ -115,12 +112,12 @@
     <div class="rounded-2xl bg-[#163d2d] border-2 border-[#d4af37] p-4 shadow-2xl space-y-3.5">
       <div class="flex items-center justify-between">
         <span class="text-sm font-black text-[#f7e7b4]">👑 主辦人主控台</span>
-        <button id="hostCloseBtn" class="text-xs text-emerald-200 underline">收起</button>
+        <button id="hostCloseBtn" class="text-xs text-emerald-200 underline p-1">收起</button>
       </div>
 
       <!-- 動態調整參加人數 -->
       <div class="flex items-center justify-between gap-2 bg-black/25 p-2.5 rounded-xl border border-white/15">
-        <label for="slotCountInput" class="text-xs font-bold text-[#f7e7b4] shrink-0">總人數</label>
+        <label for="slotCountInput" class="text-xs font-bold text-[#f7e7b4] shrink-0">全場總人數</label>
         <div class="flex items-center gap-2">
           <input id="slotCountInput" type="number" min="2" max="50" value="20" class="w-16 text-center py-1.5 rounded-lg bg-white text-emerald-950 font-black text-sm focus:outline-none" />
           <button id="applySlotCountBtn" class="px-3 py-1.5 rounded-lg bg-[#d4af37] text-emerald-950 font-black text-xs btn-press">套用人數</button>
@@ -130,7 +127,7 @@
       <!-- 4 階段切換按鈕 -->
       <div class="grid grid-cols-2 gap-2">
         <button data-set-phase="1" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">1️⃣ 轉盤抽號與寫提示</button>
-        <button data-set-phase="2" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">2️⃣ 電子籤筒抽禮物</button>
+        <button data-set-phase="2" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">2️⃣ 滾輪機抽禮物</button>
         <button data-set-phase="3" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">3️⃣ 大開箱登記禮物</button>
         <button data-set-phase="4" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">4️⃣ 不記名投最爛禮物</button>
       </div>
@@ -138,7 +135,7 @@
       <div class="pt-1 border-t border-white/15 space-y-2.5">
         <button id="revealToggleBtn" class="w-full py-3 rounded-xl bg-gradient-to-r from-[#b91c1c] to-[#991b1b] text-white text-sm font-black shadow btn-press">🏆 正式開票揭曉</button>
         <div class="text-center">
-          <button id="resetTestBtn" class="text-[11px] text-stone-400 hover:text-stone-200 underline">重置測試資料</button>
+          <button id="resetTestBtn" class="text-[11px] text-stone-400 hover:text-stone-200 underline p-1">重置測試資料</button>
         </div>
       </div>
     </div>
@@ -147,7 +144,7 @@
   <!-- ==================== 4. 主要內容區 ==================== -->
   <main id="mainContent" class="hidden max-w-lg mx-auto px-4 pt-4 space-y-4">
 
-    <!-- 未領號成員：幸運轉盤 -->
+    <!-- 未領號成員：豪華幸運轉盤 -->
     <section id="wheelRegisterCard" class="card-ivory rounded-3xl p-5 border-2 border-[#d4af37] text-center space-y-4">
       <div>
         <h2 class="text-2xl font-black text-emerald-950">轉出你的禮物編號</h2>
@@ -156,12 +153,12 @@
       <div class="max-w-xs mx-auto">
         <input id="regNameInput" type="text" maxlength="12" placeholder="輸入你的姓名或暱稱" class="w-full px-4 py-3 rounded-2xl border-2 border-stone-300 focus:border-emerald-800 focus:outline-none text-base font-bold bg-white text-center shadow-inner" />
       </div>
-      <div class="relative w-[304px] h-[304px] mx-auto flex items-center justify-center rounded-full bg-gradient-to-b from-[#f7e7b4] via-[#d4af37] to-[#8c6b15] p-2 shadow-2xl gold-glow">
+      <div class="relative w-[296px] h-[296px] sm:w-[304px] sm:h-[304px] mx-auto flex items-center justify-center rounded-full bg-gradient-to-b from-[#f7e7b4] via-[#d4af37] to-[#8c6b15] p-2 shadow-2xl gold-glow">
         <div class="absolute -top-3.5 z-20 flex flex-col items-center drop-shadow-md">
           <div class="w-4 h-4 rounded-full bg-[#b91c1c] border-2 border-[#f7e7b4]"></div>
           <div class="-mt-1 w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[24px] border-t-[#b91c1c]"></div>
         </div>
-        <canvas id="wheelCanvas" width="288" height="288" class="rounded-full bg-emerald-950"></canvas>
+        <canvas id="wheelCanvas" width="288" height="288" class="w-full h-full rounded-full bg-emerald-950"></canvas>
         <button id="spinWheelBtn" class="absolute z-10 w-20 h-20 rounded-full bg-gradient-to-b from-[#991b1b] to-[#5c0d0d] text-[#f7e7b4] border-4 border-[#f7e7b4] font-black text-base shadow-2xl btn-press flex items-center justify-center tracking-wider">開始轉</button>
       </div>
       <div class="pt-2 border-t border-stone-200 space-y-2">
@@ -170,20 +167,20 @@
       </div>
     </section>
 
-    <!-- 已轉出號碼成員：個人狀態卡（無括號、乾淨間距顯示） -->
+    <!-- 已轉出號碼成員：個人狀態卡（清楚區分送出與抽中，人物名字無括號） -->
     <section id="myStatusCard" class="hidden rounded-2xl bg-emerald-950/95 border border-[#d4af37]/60 p-4 shadow-lg space-y-3">
       <div class="flex items-center justify-between gap-3">
         <div class="space-y-1">
-          <p class="text-xs text-emerald-200/80">你送出的禮物編號</p>
+          <p class="text-xs text-emerald-200/80">你送出的禮物</p>
           <p class="text-xl font-black text-[#f7e7b4] flex items-baseline gap-2.5">
-            <span id="myOwnNumberText"><span class="text-[10px] opacity-75 font-bold mr-0.5">#</span>01</span>
+            <span id="myOwnNumberText"></span>
             <span id="myOwnNameText" class="text-lg font-bold text-white"></span>
           </p>
         </div>
         <div id="myWonBadgeBox" class="hidden text-right space-y-1">
           <p class="text-xs text-amber-200/80">你抽中的禮物</p>
           <p class="text-xl font-black text-white">
-            <span id="myWonNumberTopText"><span class="text-[10px] opacity-75 font-bold mr-0.5">#</span>07</span>
+            <span id="myWonNumberTopText"></span>
           </p>
         </div>
       </div>
@@ -193,7 +190,7 @@
       </div>
     </section>
 
-    <!-- 階段 1：全場禮物提示牆 -->
+    <!-- ==================== 階段 1：全場禮物提示牆 ==================== -->
     <section id="phase1Section" class="hidden space-y-3">
       <div class="flex items-center justify-between px-1">
         <h3 class="text-sm font-black text-[#f7e7b4]">全場禮物提示牆</h3>
@@ -202,28 +199,28 @@
       <div id="hintsList" class="space-y-2.5"></div>
     </section>
 
-    <!-- 階段 2：超大華麗電子籤筒抽禮物舞台 -->
+    <!-- ==================== 階段 2：動態大樂透滾輪開獎機 ==================== -->
     <section id="phase2Section" class="hidden space-y-4">
-      <div class="rounded-3xl bg-gradient-to-b from-[#174633] via-[#0e2e21] to-[#081b13] border-2 border-[#d4af37] p-6 text-center shadow-2xl space-y-6 relative overflow-hidden">
+      <div class="rounded-3xl bg-gradient-to-b from-[#174633] via-[#0e2e21] to-[#081b13] border-2 border-[#d4af37] p-5 sm:p-6 text-center shadow-2xl space-y-5 relative overflow-hidden">
 
         <!-- 頂部標籤列 -->
         <div class="relative z-10 flex items-center justify-between">
-          <span class="px-3 py-1 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/50 text-[#f7e7b4] text-xs font-bold">✨ 幸運御神籤筒</span>
+          <span class="px-3 py-1 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/50 text-[#f7e7b4] text-xs font-bold">🎰 聖誕大樂透開獎機</span>
           <span id="topRedrawStatusBadge" class="text-xs font-bold text-emerald-200/90">每人限重抽 1 次</span>
         </div>
 
-        <!-- 標題區（預留充足垂直間距，竹籤絕對不會重疊到文字） -->
-        <div id="lotteryHeaderBlock" class="relative z-10 space-y-1.5 pt-2 pb-6">
-          <h2 id="lotteryMainHeading" class="text-2xl font-black text-[#f7e7b4] tracking-wide">搖出你的聖誕禮物</h2>
+        <!-- 標題區 -->
+        <div id="lotteryHeaderBlock" class="relative z-10 space-y-1.5 pt-1">
+          <h2 id="lotteryMainHeading" class="text-2xl font-black text-[#f7e7b4] tracking-wide">轉動滾輪抽出聖誕禮物</h2>
           <p id="lotterySubHeading" class="text-xs text-emerald-200/85">已自動排除你自己送的禮物</p>
         </div>
 
-        <!-- 抽出的神祕禮物籤彈出卡片（下方籤筒保持顯示） -->
-        <div id="lotteryDecisionBox" class="hidden relative z-10 space-y-4">
-          <div class="stick-pop mx-auto max-w-xs rounded-2xl bg-gradient-to-b from-[#fef9c3] via-[#fcfaf5] to-[#f3e8c8] border-4 border-[#d4af37] p-5 shadow-2xl space-y-2.5">
-            <span class="inline-block px-3 py-0.5 rounded-full bg-[#991b1b] text-[#f7e7b4] text-xs font-black tracking-widest">神祕禮物籤</span>
+        <!-- 抽出的神祕禮物提示卡（彈出在滾輪機上方，與下方滾輪機完全不重疊） -->
+        <div id="lotteryDecisionBox" class="hidden relative z-10 space-y-4 pb-1">
+          <div class="card-pop mx-auto max-w-xs rounded-2xl bg-gradient-to-b from-[#fef9c3] via-[#fcfaf5] to-[#f3e8c8] border-4 border-[#d4af37] p-5 shadow-2xl space-y-2.5">
+            <span class="inline-block px-3 py-0.5 rounded-full bg-[#991b1b] text-[#f7e7b4] text-xs font-black tracking-widest">掉出神祕禮物球</span>
             <p id="drawnHintText" class="text-2xl sm:text-3xl font-black text-stone-900 leading-snug py-1.5 break-words"></p>
-            <div class="text-xs font-bold text-amber-800">要收下這支籤，還是丟回籤筒重抽？</div>
+            <div class="text-xs font-bold text-amber-800">要收下這份禮物，還是丟回滾輪重抽？</div>
           </div>
           <div id="decisionButtonsRow" class="grid grid-cols-2 gap-3">
             <button id="redrawBtn" class="py-3.5 px-3 rounded-2xl bg-white/15 border border-white/40 text-white font-black text-sm btn-press">🔄 丟回重抽</button>
@@ -231,47 +228,35 @@
           </div>
         </div>
 
-        <!-- 立體紅金籤筒舞台 -->
-        <div id="bambooTubeStage" class="relative z-10 pt-10 pb-2 space-y-6">
-          <div id="bambooTubeWrapper" class="relative w-52 h-60 mx-auto flex flex-col items-center justify-end select-none">
-            <!-- 筒內露出的多支金竹籤 -->
-            <div class="flex items-end justify-center gap-1.5 -mb-5 z-0">
-              <div class="w-3.5 h-20 rounded-t-md bg-gradient-to-t from-[#b45309] to-[#fde68a] border border-[#78350f] -rotate-12 origin-bottom"></div>
-              <div class="w-3.5 h-24 rounded-t-md bg-gradient-to-t from-[#b45309] to-[#fef08a] border border-[#78350f] -rotate-6 origin-bottom"></div>
-              <div class="w-4 h-28 rounded-t-md bg-gradient-to-t from-[#d97706] to-[#fef9c3] border border-[#78350f] z-10"></div>
-              <div class="w-3.5 h-24 rounded-t-md bg-gradient-to-t from-[#b45309] to-[#fde68a] border border-[#78350f] rotate-6 origin-bottom"></div>
-              <div class="w-3.5 h-20 rounded-t-md bg-gradient-to-t from-[#b45309] to-[#fef08a] border border-[#78350f] rotate-12 origin-bottom"></div>
-            </div>
-            <!-- 籤筒筒身 -->
-            <div class="relative z-10 w-36 h-40 rounded-b-3xl rounded-t-xl bg-gradient-to-r from-[#690f0f] via-[#b91c1c] to-[#5c0b0b] border-2 border-[#f7e7b4] shadow-2xl flex flex-col items-center justify-between py-3">
-              <div class="w-full h-3 bg-gradient-to-r from-[#b45309] via-[#fef08a] to-[#b45309] border-y border-[#78350f]"></div>
-              <div class="w-16 h-16 rotate-45 bg-[#fcfaf5] border-2 border-[#d4af37] shadow-inner flex items-center justify-center">
-                <span class="-rotate-45 text-2xl font-black text-[#991b1b]">福</span>
-              </div>
-              <div class="w-full h-3 bg-gradient-to-r from-[#b45309] via-[#fef08a] to-[#b45309] border-y border-[#78350f]"></div>
-            </div>
+        <!-- 大樂透滾輪開獎機 Canvas 舞台（丟回重抽時依然完整保留在畫面上） -->
+        <div id="lottoMachineStage" class="relative z-10 space-y-4">
+          <div class="w-full max-w-[300px] mx-auto flex items-center justify-center">
+            <canvas id="lottoCanvas" class="w-[300px] h-[280px] max-w-full block"></canvas>
           </div>
-          <button id="drawTicketBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#f7e7b4] via-[#d4af37] to-[#b48a28] text-emerald-950 text-lg font-black shadow-xl btn-press tracking-wide">🎋 用力搖出一支籤！</button>
+          <button id="drawTicketBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#f7e7b4] via-[#d4af37] to-[#b48a28] text-emerald-950 text-lg font-black shadow-xl btn-press tracking-wide">
+            🎰 啟動滾輪抽禮物！
+          </button>
         </div>
 
-        <!-- 已抽定結果（乾淨俐落的實體白金卡片，無多餘半透明框） -->
+        <!-- 已抽定結果（乾淨俐落的高對比紅金實體卡片，無多餘半透明框） -->
         <div id="lotteryResultBox" class="hidden relative z-10 space-y-4 py-3">
-          <p class="text-sm font-black text-[#f7e7b4]">🎉 抽籤完成！請領取你的聖誕禮物</p>
-          <div class="mx-auto max-w-[220px] py-6 px-6 rounded-2xl bg-[#fcfaf5] border-2 border-[#d4af37] text-emerald-950">
-            <span class="text-xs font-bold text-stone-500 block tracking-widest mb-1">抽中禮物編號</span>
-            <span id="finalWonNumber" class="text-5xl font-black tracking-wider text-[#991b1b]"></span>
+          <p class="text-sm font-black text-[#f7e7b4]">🎉 抽獎完成！請領取你的聖誕禮物</p>
+          <div class="mx-auto max-w-[230px] py-6 px-6 rounded-2xl bg-[#991b1b] border-4 border-[#d4af37] text-[#fcfaf5] shadow-2xl">
+            <span class="text-xs font-bold text-[#f7e7b4] block tracking-widest mb-1.5">抽中禮物編號</span>
+            <span id="finalWonNumber" class="text-5xl font-black tracking-wider text-white"></span>
           </div>
           <p id="finalWonHint" class="text-base font-bold text-emerald-100"></p>
         </div>
       </div>
 
+      <!-- 全場抽取進度即時同步 -->
       <div class="rounded-2xl bg-black/30 border border-white/15 p-3.5 space-y-2">
-        <p id="poolRemainText" class="text-xs text-center text-[#f7e7b4] font-bold">籤筒剩餘 20 支有效籤</p>
+        <p id="poolRemainText" class="text-xs text-center text-[#f7e7b4] font-bold">滾輪機剩餘 20 顆有效禮物球</p>
         <div id="drawProgressChips" class="flex flex-wrap justify-center gap-1.5"></div>
       </div>
     </section>
 
-    <!-- 正式開票結果看板 -->
+    <!-- ==================== 正式開票結果看板 ==================== -->
     <section id="resultBanner" class="hidden rounded-3xl bg-gradient-to-b from-[#7f1d1d] to-[#450a0a] border-2 border-[#f7e7b4] p-5 text-center shadow-2xl space-y-3">
       <div class="text-3xl">👑🧋</div>
       <h2 class="text-xl sm:text-2xl font-black text-[#f7e7b4] leading-snug">
@@ -281,7 +266,7 @@
       <div id="loserList" class="space-y-2 pt-1"></div>
     </section>
 
-    <!-- 階段 3 & 4：大開箱紀錄與保密投票卡片 -->
+    <!-- ==================== 階段 3 & 4：大開箱紀錄與保密投票卡片 ==================== -->
     <section id="cardsGrid" class="hidden space-y-3.5"></section>
   </main>
 
@@ -294,7 +279,8 @@
         <h3 id="modalTitle" class="text-xl font-black text-emerald-950">01 號禮物</h3>
         <button id="modalCloseBtn" class="w-8 h-8 rounded-full bg-stone-200 text-stone-700 font-bold">✕</button>
       </div>
-      <!-- 你的禮物提示（不事先標注字數，送出不足 6 字時直接顯示紅字警告） -->
+
+      <!-- 你的禮物提示（介面不放任何字數限制提示，送出不足 6 字時直接跳出紅字提醒） -->
       <div id="modalHintFields" class="space-y-2">
         <div>
           <label class="block text-xs font-bold text-stone-600 mb-1.5">你的禮物提示</label>
@@ -302,6 +288,7 @@
         </div>
         <p id="hintErrorMsg" class="hidden text-xs font-black text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2"></p>
       </div>
+
       <!-- 收到的禮物內容 -->
       <div id="modalGiftFields" class="hidden space-y-3">
         <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-bold">
@@ -313,6 +300,7 @@
         </div>
         <p id="giftErrorMsg" class="hidden text-xs font-black text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2"></p>
       </div>
+
       <button id="modalSaveBtn" class="w-full py-3.5 rounded-2xl bg-[#14532d] text-[#f7e7b4] font-black text-base shadow-lg btn-press">儲存</button>
     </div>
   </div>
@@ -343,12 +331,24 @@
     </div>
   </div>
 
+  <!-- 雲端連線診斷視窗（點擊單機模式燈號時開啟） -->
+  <div id="syncInfoModal" class="hidden fixed inset-0 z-[65] bg-black/80 flex items-center justify-center p-4">
+    <div class="card-ivory w-full max-w-sm rounded-3xl p-5 space-y-4 border-2 border-[#d4af37]">
+      <div class="flex items-center justify-between border-b border-stone-200 pb-2.5">
+        <h3 id="syncInfoTitle" class="text-base font-black text-emerald-950">雲端連線狀態</h3>
+        <button id="syncInfoCloseBtn" class="w-7 h-7 rounded-full bg-stone-200 text-stone-700 font-bold text-xs">✕</button>
+      </div>
+      <div id="syncInfoBody" class="text-xs text-stone-700 space-y-2.5 leading-relaxed"></div>
+      <button id="syncInfoOkBtn" class="w-full py-2.5 rounded-xl bg-[#14532d] text-[#f7e7b4] font-black text-sm btn-press">我知道了</button>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 已內建你的 Firebase 專案設定 (xmas-2026-6f875)
+    // ==================== Firebase 設定 ====================
     const USER_FIREBASE_CONFIG = {
       apiKey: "AIzaSyD6kiQTS7cKqWY8AvfmshSouRtCR_AJXg8",
       authDomain: "xmas-2026-6f875.firebaseapp.com",
@@ -362,7 +362,7 @@
     const ENTRY_PWD = "2026";
     const HOST_PWD = "1234";
 
-    // 浮動通知 Toast
+    // ==================== 通用工具：Toast / Confirm / 格式化 ====================
     let toastTimer = null;
     function showToast(msg) {
       const box = document.getElementById("toastBox");
@@ -372,7 +372,6 @@
       toastTimer = setTimeout(() => box.classList.add("hidden"), 3000);
     }
 
-    // 自訂二次確認視窗
     let confirmCallback = null;
     function showConfirm(msg, onConfirm) {
       document.getElementById("confirmMessage").textContent = msg;
@@ -390,12 +389,69 @@
       if (typeof fn === "function") await fn();
     });
 
-    // 全站縮小 # 符號，維持數字與文字清晰放大
+    // 全站統一縮小 # 符號，維持數字與中文清晰放大
     function fmtNum(id, hashSizeClass = "text-[10px]") {
-      return `<span class="${hashSizeClass} opacity-75 font-bold mr-0.5">#</span>${id}`;
+      return `<span class="${hashSizeClass} opacity-70 font-bold mr-0.5">#</span>${id}`;
     }
 
-    // 裝置專屬識別碼（防止同裝置重複領號或重複投票）
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    // ==================== 連線狀態指示燈 ====================
+    let syncStatus = "connecting"; // "connecting" | "cloud" | "local"
+    let lastFirebaseError = "";
+
+    function updateSyncPill(status, errMsg = "") {
+      syncStatus = status;
+      if (errMsg) lastFirebaseError = errMsg;
+      const pill = document.getElementById("syncStatusPill");
+      if (!pill) return;
+
+      if (status === "cloud") {
+        pill.textContent = "🟢 雲端同步中";
+        pill.className = "px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 transition";
+      } else if (status === "local") {
+        pill.textContent = "🔴 單機模式";
+        pill.className = "px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-500/25 text-red-200 border border-red-400/50 underline cursor-pointer transition";
+      } else {
+        pill.textContent = "🟡 連線中...";
+        pill.className = "px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-200 border border-amber-400/40 transition";
+      }
+    }
+
+    document.getElementById("syncStatusPill").addEventListener("click", () => {
+      const titleEl = document.getElementById("syncInfoTitle");
+      const bodyEl = document.getElementById("syncInfoBody");
+      if (syncStatus === "cloud") {
+        titleEl.textContent = "🟢 雲端同步正常運作中";
+        bodyEl.innerHTML = `
+          <p>已成功連線至 Firebase 雲端資料庫（<strong>xmas-2026-6f875</strong>）。</p>
+          <p>所有人的轉盤抽號、禮物提示、滾輪抽獎與投票皆會即時同步，不會重複撞號。</p>
+        `;
+      } else if (syncStatus === "local") {
+        titleEl.textContent = "🔴 目前為單機模式（無法跨手機同步）";
+        bodyEl.innerHTML = `
+          <p class="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 font-bold break-all">
+            錯誤原因：${escapeHtml(lastFirebaseError || "無法連線至 Firebase")}
+          </p>
+          <p class="font-bold text-stone-900">請到 Firebase Console 確認以下兩項設定：</p>
+          <ol class="list-decimal pl-4 space-y-1">
+            <li><strong>Authentication → Sign-in method</strong>：開啟「<strong>匿名（Anonymous）</strong>」登入。</li>
+            <li><strong>Firestore Database → 規則（Rules）</strong>：確認已建立資料庫並開啟測試模式讀寫權限（到期日需晚於活動日期）。</li>
+          </ol>
+        `;
+      } else {
+        titleEl.textContent = "🟡 正在連線雲端資料庫...";
+        bodyEl.innerHTML = `<p>請稍候 1～2 秒，正在建立即時同步通道。</p>`;
+      }
+      document.getElementById("syncInfoModal").classList.remove("hidden");
+    });
+
+    document.getElementById("syncInfoCloseBtn").addEventListener("click", () => document.getElementById("syncInfoModal").classList.add("hidden"));
+    document.getElementById("syncInfoOkBtn").addEventListener("click", () => document.getElementById("syncInfoModal").classList.add("hidden"));
+
+    // ==================== 裝置身分與資料模型 ====================
     let deviceId = "";
     try {
       deviceId = localStorage.getItem("xmas2026_device_id") || "";
@@ -416,7 +472,6 @@
       return slots;
     }
 
-    // 動態增減人數時，保留已被領取的號碼並補足或移除多餘空號
     function normalizeSlots(existingSlots, totalCount) {
       const result = { ...(existingSlots || {}) };
       for (let i = 1; i <= totalCount; i++) {
@@ -437,9 +492,9 @@
     let state = { totalSlots: 20, phase: 1, revealed: false, slots: createInitialSlots(20), users: {} };
     let db = null, roomRef = null, currentUser = null, useLocalFallback = false, isHostUnlocked = false;
     let currentEditSlotId = null, tempCandidateSlotId = null, lastThrownSlotId = null;
-    let isSpinning = false, isShakingTube = false, currentRotation = 0;
+    let isSpinning = false, isLottoRunning = false, currentRotation = 0;
 
-    // ==================== 1. 入場門禁 ====================
+    // ==================== 1. 入場門禁邏輯 ====================
     function initGate() {
       try {
         if (sessionStorage.getItem("xmas2026_gate_passed") === "1") unlockGateUI();
@@ -469,6 +524,7 @@
 
     // ==================== 2. Firebase 雲端即時同步 ====================
     async function initDatabase() {
+      updateSyncPill("connecting");
       try {
         const app = initializeApp(USER_FIREBASE_CONFIG);
         const auth = getAuth(app);
@@ -476,11 +532,16 @@
 
         const cred = await signInAnonymously(auth);
         currentUser = cred.user;
-        if (!currentUser) { enableLocalMode(); return; }
+        if (!currentUser) {
+          enableLocalMode("匿名登入未回傳使用者身分");
+          return;
+        }
 
         roomRef = doc(db, 'artifacts', 'xmas-2026-live', 'public', 'data', 'xmas_2026_event', 'room_main');
 
         onSnapshot(roomRef, (snap) => {
+          updateSyncPill("cloud");
+          useLocalFallback = false;
           if (snap.exists()) {
             const data = snap.data();
             state.totalSlots = data.totalSlots || 20;
@@ -488,24 +549,23 @@
             state.revealed = !!data.revealed;
             state.slots = normalizeSlots(data.slots, state.totalSlots);
             state.users = data.users || {};
-            if (!isSpinning && !isShakingTube) renderAll();
+            if (!isSpinning && !isLottoRunning) renderAll();
           } else {
-            setDoc(roomRef, state);
+            setDoc(roomRef, state).catch(err => enableLocalMode(err?.message || String(err)));
           }
         }, (err) => {
-          console.warn("Firestore 監聽切換至本機模式:", err);
-          enableLocalMode();
+          enableLocalMode(err?.code ? `${err.code}: ${err.message}` : String(err));
         });
       } catch (e) {
-        console.warn("Firebase 初始化切換至本機模式:", e);
-        enableLocalMode();
+        enableLocalMode(e?.code ? `${e.code}: ${e.message}` : String(e));
       }
     }
 
-    function enableLocalMode() {
+    function enableLocalMode(errMsg = "") {
       useLocalFallback = true;
+      updateSyncPill("local", errMsg);
       try {
-        const saved = localStorage.getItem("xmas2026_deluxe_fallback");
+        const saved = localStorage.getItem("xmas2026_lotto_fallback");
         if (saved) state = JSON.parse(saved);
       } catch (e) {}
       state.totalSlots = state.totalSlots || 20;
@@ -513,13 +573,13 @@
       renderAll();
     }
 
-    // 使用 Firestore Transaction 確保多人同時操作絕不撞號或覆蓋
+    // 使用 Firestore Transaction 確保多人同時操作絕不撞號
     async function mutateRoom(updaterFn) {
       if (useLocalFallback) {
         const res = updaterFn(state);
         if (res === false) return false;
-        try { localStorage.setItem("xmas2026_deluxe_fallback", JSON.stringify(state)); } catch (e) {}
-        if (!isSpinning && !isShakingTube) renderAll();
+        try { localStorage.setItem("xmas2026_lotto_fallback", JSON.stringify(state)); } catch (e) {}
+        if (!isSpinning && !isLottoRunning) renderAll();
         return true;
       }
       if (!currentUser || !roomRef) return false;
@@ -543,7 +603,420 @@
       }
     }
 
-    // ==================== 3. 畫面渲染 ====================
+    // ==================== 3. 大樂透滾輪開獎機 Canvas 動畫引擎 ====================
+    const lottoEngine = {
+      canvas: null,
+      ctx: null,
+      width: 300,
+      height: 280,
+      cx: 150,
+      cy: 112,
+      drumR: 84,
+      drumAngle: 0,
+      crankAngle: 0,
+      mode: "idle", // "idle" | "spinning" | "dropping" | "returning"
+      balls: [],
+      sparkles: [],
+      dropBall: { active: false, y: 196, vy: 0, glow: 0 },
+      rafId: null,
+      initialized: false,
+
+      init() {
+        if (this.initialized) return;
+        this.canvas = document.getElementById("lottoCanvas");
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext("2d");
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        this.canvas.width = this.width * dpr;
+        this.canvas.height = this.height * dpr;
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        // 建立 18 顆立體彩色樂透球
+        const palette = [
+          { base: "#dc2626", dark: "#7f1d1d", light: "#fca5a5" }, // 紅
+          { base: "#eab308", dark: "#854d0e", light: "#fef08a" }, // 金
+          { base: "#10b981", dark: "#064e3b", light: "#a7f3d0" }, // 祖母綠
+          { base: "#f5f5f4", dark: "#a8a29e", light: "#ffffff" }, // 珍珠白
+          { base: "#f59e0b", dark: "#92400e", light: "#fde68a" }  // 琥珀金
+        ];
+        const symbols = ["?", "★", "?", "❄", "?"];
+        this.balls = [];
+        for (let i = 0; i < 18; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = Math.random() * (this.drumR - 22);
+          const col = palette[i % palette.length];
+          this.balls.push({
+            x: this.cx + Math.cos(angle) * dist,
+            y: this.cy + 18 + Math.sin(angle) * (dist * 0.6),
+            vx: (Math.random() - 0.5) * 1.2,
+            vy: (Math.random() - 0.5) * 1.2,
+            r: 11.5,
+            col,
+            sym: symbols[i % symbols.length]
+          });
+        }
+        this.initialized = true;
+        this.loop();
+      },
+
+      setMode(newMode) {
+        this.mode = newMode;
+        if (newMode === "spinning") {
+          this.dropBall.active = false;
+          // 給球體強力初速度開始翻滾
+          this.balls.forEach(b => {
+            b.vx = (Math.random() - 0.5) * 13;
+            b.vy = -4 - Math.random() * 9;
+          });
+          // 產生金色星塵火花
+          this.sparkles = [];
+          for (let i = 0; i < 18; i++) {
+            const a = Math.random() * Math.PI * 2;
+            this.sparkles.push({
+              x: this.cx + Math.cos(a) * (this.drumR + 8 + Math.random() * 24),
+              y: this.cy + Math.sin(a) * (this.drumR + 8 + Math.random() * 24),
+              r: 1.5 + Math.random() * 2.5,
+              alpha: Math.random(),
+              speed: 0.04 + Math.random() * 0.05
+            });
+          }
+        } else if (newMode === "dropping") {
+          this.dropBall = { active: true, y: this.cy + this.drumR - 4, vy: 1.5, glow: 1 };
+        } else if (newMode === "returning") {
+          this.dropBall = { active: true, y: 248, vy: -5.5, glow: 0.8 };
+          this.balls.forEach(b => {
+            b.vx = (Math.random() - 0.5) * 7;
+            b.vy = -2 - Math.random() * 5;
+          });
+        } else {
+          this.dropBall.active = false;
+          this.sparkles = [];
+        }
+      },
+
+      updatePhysics() {
+        const isFast = this.mode === "spinning";
+        const isRet = this.mode === "returning";
+
+        // 滾輪與搖臂轉速
+        this.drumAngle += isFast ? 0.14 : (isRet ? -0.09 : 0.012);
+        this.crankAngle += isFast ? 0.28 : (isRet ? -0.18 : 0.016);
+
+        const maxR = this.drumR - 14;
+        const gravity = isFast ? 0.28 : 0.22;
+
+        for (let i = 0; i < this.balls.length; i++) {
+          const b = this.balls[i];
+          b.vy += gravity;
+
+          if (isFast) {
+            // 高速旋轉氣流與攪拌推力
+            const dx = b.x - this.cx;
+            const dy = b.y - this.cy;
+            b.vx += -dy * 0.009 + (Math.random() - 0.5) * 1.4;
+            b.vy += dx * 0.009 - 0.35 + (Math.random() - 0.5) * 1.4;
+            b.vx *= 0.985;
+            b.vy *= 0.985;
+          } else if (isRet) {
+            b.vx += (Math.random() - 0.5) * 0.8;
+            b.vy += (Math.random() - 0.5) * 0.8;
+            b.vx *= 0.96;
+            b.vy *= 0.96;
+          } else {
+            // 待機時輕微被緩慢轉動的滾輪帶動，在底部自然滾動
+            b.vx *= 0.93;
+            b.vy *= 0.93;
+          }
+
+          b.x += b.vx;
+          b.y += b.vy;
+
+          // 圓形滾輪內壁碰撞
+          const dx = b.x - this.cx;
+          const dy = b.y - this.cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist > maxR) {
+            const nx = dx / dist;
+            const ny = dy / dist;
+            b.x = this.cx + nx * maxR;
+            b.y = this.cy + ny * maxR;
+            const dot = b.vx * nx + b.vy * ny;
+            const bounce = isFast ? 0.82 : 0.35;
+            b.vx -= (1 + bounce) * dot * nx;
+            b.vy -= (1 + bounce) * dot * ny;
+            // 滾輪內壁切線摩擦力（待機時輕微帶動球體）
+            const tang = isFast ? 1.4 : 0.16;
+            b.vx += -ny * tang;
+            b.vy += nx * tang;
+          }
+        }
+
+        // 球與球之間的簡易彈性碰撞
+        for (let i = 0; i < this.balls.length; i++) {
+          for (let j = i + 1; j < this.balls.length; j++) {
+            const a = this.balls[i], b = this.balls[j];
+            const dx = b.x - a.x, dy = b.y - a.y;
+            const dist = Math.hypot(dx, dy);
+            const minDist = a.r + b.r;
+            if (dist > 0 && dist < minDist) {
+              const overlap = (minDist - dist) * 0.5;
+              const nx = dx / dist, ny = dy / dist;
+              a.x -= nx * overlap; a.y -= ny * overlap;
+              b.x += nx * overlap; b.y += ny * overlap;
+              const dvx = b.vx - a.vx, dvy = b.vy - a.vy;
+              const rel = dvx * nx + dvy * ny;
+              if (rel < 0) {
+                const imp = rel * (isFast ? 0.8 : 0.45);
+                a.vx += imp * nx; a.vy += imp * ny;
+                b.vx -= imp * nx; b.vy -= imp * ny;
+              }
+            }
+          }
+        }
+
+        // 掉出球與回收球物理
+        if (this.dropBall.active) {
+          if (this.mode === "dropping") {
+            this.dropBall.vy += 0.48;
+            this.dropBall.y += this.dropBall.vy;
+            if (this.dropBall.y > 246) {
+              this.dropBall.y = 246;
+              this.dropBall.vy *= -0.45;
+              if (Math.abs(this.dropBall.vy) < 0.8) this.dropBall.vy = 0;
+            }
+          } else if (this.mode === "returning") {
+            this.dropBall.y += this.dropBall.vy;
+            if (this.dropBall.y <= this.cy + this.drumR - 8) {
+              this.dropBall.active = false;
+            }
+          }
+        }
+
+        // 更新星塵閃爍
+        this.sparkles.forEach(s => {
+          s.alpha += s.speed;
+          if (s.alpha > 1 || s.alpha < 0.1) s.speed *= -1;
+        });
+      },
+
+      drawBall(ctx, x, y, r, col, sym, isGoldenDrop = false) {
+        ctx.save();
+        if (isGoldenDrop) {
+          ctx.shadowColor = "rgba(250, 204, 21, 0.9)";
+          ctx.shadowBlur = 16;
+        }
+        const grad = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.12, x, y, r);
+        grad.addColorStop(0, col.light);
+        grad.addColorStop(0.5, col.base);
+        grad.addColorStop(1, col.dark);
+
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // 球面高光
+        ctx.beginPath();
+        ctx.ellipse(x - r * 0.3, y - r * 0.32, r * 0.28, r * 0.16, -0.6, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,0.65)";
+        ctx.fill();
+
+        // 球心符號
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = col.base === "#f5f5f4" ? "#991b1b" : "#ffffff";
+        ctx.font = `900 ${Math.round(r * 0.95)}px 'Noto Sans TC', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(sym, x, y + 1);
+        ctx.restore();
+      },
+
+      draw() {
+        const ctx = this.ctx;
+        if (!ctx) return;
+        ctx.clearRect(0, 0, this.width, this.height);
+
+        const cx = this.cx, cy = this.cy, R = this.drumR;
+
+        // 1. 旋轉時的金色光暈與火花
+        if (this.mode === "spinning" || this.mode === "dropping") {
+          const glow = ctx.createRadialGradient(cx, cy, R * 0.4, cx, cy, R + 34);
+          glow.addColorStop(0, "rgba(247, 231, 180, 0.28)");
+          glow.addColorStop(1, "rgba(247, 231, 180, 0)");
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(cx, cy, R + 34, 0, Math.PI * 2);
+          ctx.fill();
+
+          this.sparkles.forEach(s => {
+            ctx.fillStyle = `rgba(254, 240, 138, ${Math.max(0, Math.min(1, s.alpha))})`;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+          });
+        }
+
+        // 2. 後方金色支架臂
+        ctx.strokeStyle = "#b48a28";
+        ctx.lineWidth = 8;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(cx - R - 10, cy);
+        ctx.lineTo(cx - 56, 236);
+        ctx.moveTo(cx + R + 10, cy);
+        ctx.lineTo(cx + 56, 236);
+        ctx.stroke();
+
+        // 3. 右側旋轉搖臂與紅球握把
+        ctx.save();
+        ctx.translate(cx + R + 12, cy);
+        ctx.strokeStyle = "#f7e7b4";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        const handleX = Math.cos(this.crankAngle) * 24;
+        const handleY = Math.sin(this.crankAngle) * 24;
+        ctx.lineTo(handleX, handleY);
+        ctx.stroke();
+        // 搖臂中心軸
+        ctx.fillStyle = "#d4af37";
+        ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fill();
+        // 握把紅球
+        ctx.fillStyle = "#dc2626";
+        ctx.beginPath(); ctx.arc(handleX, handleY, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#fef08a";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        // 4. 滾輪機底部紅金底座與出球滑槽
+        // 底座陰影
+        ctx.fillStyle = "rgba(0,0,0,0.4)";
+        ctx.beginPath();
+        ctx.ellipse(cx, 266, 92, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 紅金機械底座
+        const baseGrad = ctx.createLinearGradient(cx - 82, 224, cx + 82, 262);
+        baseGrad.addColorStop(0, "#7f1d1d");
+        baseGrad.addColorStop(0.5, "#b91c1c");
+        baseGrad.addColorStop(1, "#5c0d0d");
+        ctx.fillStyle = baseGrad;
+        ctx.beginPath();
+        ctx.roundRect(cx - 82, 226, 164, 36, 14);
+        ctx.fill();
+        ctx.strokeStyle = "#d4af37";
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // 底座飾條
+        ctx.fillStyle = "#f7e7b4";
+        ctx.fillRect(cx - 64, 232, 128, 3);
+
+        // 出球滑槽管口（從滾輪底部接到托盤）
+        ctx.fillStyle = "#450a0a";
+        ctx.strokeStyle = "#d4af37";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(cx - 20, cy + R - 6, 40, 44, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        // 接球金色托盤口
+        ctx.fillStyle = "#1c1917";
+        ctx.beginPath();
+        ctx.ellipse(cx, 250, 26, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#f7e7b4";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 5. 透明玻璃球體背景
+        const glassBg = ctx.createRadialGradient(cx - 24, cy - 28, 10, cx, cy, R);
+        glassBg.addColorStop(0, "rgba(255, 255, 255, 0.22)");
+        glassBg.addColorStop(0.65, "rgba(16, 60, 42, 0.45)");
+        glassBg.addColorStop(1, "rgba(5, 22, 15, 0.78)");
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.fillStyle = glassBg;
+        ctx.fill();
+
+        // 6. 滾輪內部金屬旋轉葉片（背景層）
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(this.drumAngle);
+        ctx.strokeStyle = "rgba(247, 231, 180, 0.35)";
+        ctx.lineWidth = 3;
+        for (let i = 0; i < 6; i++) {
+          const a = (i * Math.PI) / 3;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(a) * (R - 4), Math.sin(a) * (R - 4));
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // 7. 繪製所有滾動中的彩色樂透球
+        for (const b of this.balls) {
+          this.drawBall(ctx, b.x, b.y, b.r, b.col, b.sym, false);
+        }
+
+        // 8. 玻璃球體前方反光與金屬外環
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        const rimGrad = ctx.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
+        rimGrad.addColorStop(0, "#fef08a");
+        rimGrad.addColorStop(0.5, "#d4af37");
+        rimGrad.addColorStop(1, "#854d0e");
+        ctx.strokeStyle = rimGrad;
+        ctx.lineWidth = 7;
+        ctx.stroke();
+
+        // 玻璃弧形高光
+        ctx.beginPath();
+        ctx.arc(cx, cy, R - 10, -Math.PI * 0.82, -Math.PI * 0.42);
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
+        ctx.lineWidth = 5;
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+        // 中心金屬軸帽
+        ctx.beginPath();
+        ctx.arc(cx, cy, 11, 0, Math.PI * 2);
+        ctx.fillStyle = rimGrad;
+        ctx.fill();
+        ctx.strokeStyle = "#78350f";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+
+        // 9. 掉出的發光幸運金球
+        if (this.dropBall.active) {
+          this.drawBall(
+            ctx,
+            cx,
+            this.dropBall.y,
+            15,
+            { base: "#facc15", dark: "#a16207", light: "#fef9c3" },
+            "★",
+            true
+          );
+        }
+      },
+
+      loop() {
+        const phase2El = document.getElementById("phase2Section");
+        if (phase2El && !phase2El.classList.contains("hidden")) {
+          this.updatePhysics();
+          this.draw();
+        }
+        this.rafId = requestAnimationFrame(() => this.loop());
+      }
+    };
+
+    // ==================== 4. 畫面總渲染 ====================
     function renderAll() {
       const me = state.users[deviceId] || null;
       const slotArr = Object.values(state.slots).sort((a, b) => a.id.localeCompare(b.id));
@@ -556,27 +1029,27 @@
       const userBadge = document.getElementById("myUserBadge");
       if (me) {
         userBadge.classList.remove("hidden");
-        userBadge.innerHTML = `${fmtNum(me.ownSlotId, "text-[9px]")} · ${escapeHtml(me.name)}`;
+        userBadge.innerHTML = `${escapeHtml(me.name)} · ${fmtNum(me.ownSlotId, "text-[9px]")}`;
       } else {
         userBadge.classList.add("hidden");
       }
 
       const phaseNames = {
         1: "階段 1｜轉盤抽號與寫提示",
-        2: "階段 2｜電子籤筒抽禮物",
+        2: "階段 2｜滾輪機抽禮物",
         3: "階段 3｜大開箱登記禮物",
         4: "階段 4｜不記名投最爛禮物"
       };
       document.getElementById("phaseBadge").textContent = phaseNames[state.phase];
 
       if (state.phase === 1) {
-        document.getElementById("statusCounter").textContent = `已完成 ${slotArr.filter(s => s.giverId && s.hint).length} / ${totalCount}`;
+        document.getElementById("statusCounter").textContent = `已完成 ${slotArr.filter(s => s.giverId && s.hint).length}/${totalCount}`;
       } else if (state.phase === 2) {
         const activeCount = slotArr.filter(s => s.giverId).length;
-        document.getElementById("statusCounter").textContent = `已抽出 ${slotArr.filter(s => s.drawnBy).length} / ${activeCount || totalCount}`;
+        document.getElementById("statusCounter").textContent = `已抽出 ${slotArr.filter(s => s.drawnBy).length}/${activeCount || totalCount}`;
       } else if (state.phase === 3) {
         const activeCount = slotArr.filter(s => s.giverId).length;
-        document.getElementById("statusCounter").textContent = `已開箱 ${slotArr.filter(s => s.gift).length} / ${activeCount || totalCount}`;
+        document.getElementById("statusCounter").textContent = `已開箱 ${slotArr.filter(s => s.gift).length}/${activeCount || totalCount}`;
       } else {
         document.getElementById("statusCounter").textContent = `已投票 ${Object.values(state.users).filter(u => u.votedSlotId).length} 人`;
       }
@@ -589,7 +1062,7 @@
         btn.classList.toggle("text-white", p !== state.phase);
       });
 
-      // 個人報到轉盤 vs 個人狀態卡
+      // 個人轉盤報到卡 vs 個人狀態卡
       const wheelCard = document.getElementById("wheelRegisterCard");
       const myStatusCard = document.getElementById("myStatusCard");
       if (!me) {
@@ -642,6 +1115,7 @@
         renderPhase1Hints(slotArr);
       } else if (state.phase === 2) {
         document.getElementById("phase2Section").classList.remove("hidden");
+        lottoEngine.init();
         renderPhase2Lottery(slotArr, me);
       } else {
         document.getElementById("cardsGrid").classList.remove("hidden");
@@ -657,7 +1131,7 @@
       }
     }
 
-    // 繪製幸運轉盤（縮小 # 號，數字清晰放大）
+    // ==================== 5. 階段 1：幸運轉盤與提示牆 ====================
     function drawWheelCanvas(availableSlots) {
       const canvas = document.getElementById("wheelCanvas");
       const ctx = canvas.getContext("2d");
@@ -697,7 +1171,7 @@
         ctx.fillText(slot.id, radius - 16, 0);
         const numWidth = ctx.measureText(slot.id).width;
         ctx.font = "700 8px 'Noto Sans TC', sans-serif";
-        ctx.fillStyle = "rgba(252, 250, 245, 0.72)";
+        ctx.fillStyle = "rgba(252, 250, 245, 0.7)";
         ctx.fillText("#", radius - 16 - numWidth - 1, 1);
         ctx.restore();
       });
@@ -707,7 +1181,6 @@
       const available = slotArr.filter(s => !s.giverId);
       drawWheelCanvas(available);
       document.getElementById("wheelPoolText").textContent = available.length > 0 ? `目前還有 ${available.length} 個號碼可抽` : "所有號碼已全數分配完畢";
-      // 僅顯示已抽出的號碼徽章，隱藏送禮人姓名
       document.getElementById("assignedChips").innerHTML = slotArr.filter(s => s.giverId).map(s =>
         `<span class="px-2 py-0.5 rounded-md bg-emerald-950/10 text-emerald-950 text-xs font-bold">${fmtNum(s.id, "text-[9px]")}</span>`
       ).join("");
@@ -771,7 +1244,7 @@
       }).join("");
     }
 
-    // 階段 2：有效籤池（自動排除已抽走、本人送出的號碼、未領取的空號）
+    // ==================== 6. 階段 2：滾輪開獎機抽禮物 ====================
     function getValidLotteryPool(slotArr, me) {
       const activeUndrawn = slotArr.filter(s => s.giverId && !s.drawnBy);
       if (!me) return activeUndrawn;
@@ -780,7 +1253,7 @@
 
     function renderPhase2Lottery(slotArr, me) {
       const remainingActive = slotArr.filter(s => s.giverId && !s.drawnBy);
-      document.getElementById("poolRemainText").textContent = `籤筒剩餘 ${remainingActive.length} 支有效籤`;
+      document.getElementById("poolRemainText").textContent = `滾輪機剩餘 ${remainingActive.length} 顆有效禮物球`;
       document.getElementById("drawProgressChips").innerHTML = Object.values(state.users).filter(u => u.wonSlotId).map(u =>
         `<span class="px-2.5 py-1 rounded-lg bg-white/10 text-[#f7e7b4] text-xs font-bold">✓ ${escapeHtml(u.name)}</span>`
       ).join("");
@@ -789,7 +1262,7 @@
       const mainHeading = document.getElementById("lotteryMainHeading");
       const subHeading = document.getElementById("lotterySubHeading");
       const decisionBox = document.getElementById("lotteryDecisionBox");
-      const tubeStage = document.getElementById("bambooTubeStage");
+      const machineStage = document.getElementById("lottoMachineStage");
       const resultBox = document.getElementById("lotteryResultBox");
       const drawBtn = document.getElementById("drawTicketBtn");
 
@@ -798,31 +1271,137 @@
       document.getElementById("topRedrawStatusBadge").textContent = (me && me.redrawUsed) ? "重抽機會已使用" : "每人限重抽 1 次";
 
       if (me && me.wonSlotId && state.slots[me.wonSlotId]) {
-        headerBlock.classList.add("hidden"); decisionBox.classList.add("hidden"); tubeStage.classList.add("hidden"); resultBox.classList.remove("hidden");
+        // 已確定抽中：隱藏滾輪與決策卡，顯示乾淨俐落的高對比實體號碼卡
+        headerBlock.classList.add("hidden");
+        decisionBox.classList.add("hidden");
+        machineStage.classList.add("hidden");
+        resultBox.classList.remove("hidden");
         document.getElementById("finalWonNumber").innerHTML = fmtNum(me.wonSlotId, "text-base");
         document.getElementById("finalWonHint").textContent = `提示：「${state.slots[me.wonSlotId].hint || '神祕禮物'}」`;
       } else if (tempCandidateSlotId && state.slots[tempCandidateSlotId]) {
-        headerBlock.classList.add("hidden"); decisionBox.classList.remove("hidden"); tubeStage.classList.remove("hidden"); drawBtn.classList.add("hidden"); resultBox.classList.add("hidden");
+        // 剛抽出一顆候選球：上方彈出提示卡，下方保留滾輪機
+        headerBlock.classList.add("hidden");
+        decisionBox.classList.remove("hidden");
+        machineStage.classList.remove("hidden");
+        drawBtn.classList.add("hidden");
+        resultBox.classList.add("hidden");
         document.getElementById("drawnHintText").textContent = `「${state.slots[tempCandidateSlotId].hint || '未填寫提示'}」`;
+
         const redrawBtn = document.getElementById("redrawBtn");
         const row = document.getElementById("decisionButtonsRow");
         redrawBtn.classList.toggle("hidden", !canRedraw);
         row.classList.toggle("grid-cols-2", canRedraw);
         row.classList.toggle("grid-cols-1", !canRedraw);
       } else {
-        headerBlock.classList.remove("hidden"); decisionBox.classList.add("hidden"); tubeStage.classList.remove("hidden"); drawBtn.classList.remove("hidden"); resultBox.classList.add("hidden");
+        // 待機 / 丟回重抽後準備再轉一次
+        headerBlock.classList.remove("hidden");
+        decisionBox.classList.add("hidden");
+        machineStage.classList.remove("hidden");
+        drawBtn.classList.remove("hidden");
+        resultBox.classList.add("hidden");
         if (me && me.redrawUsed) {
-          mainHeading.textContent = "已丟回籤筒！請再搖一次";
-          subHeading.textContent = "這是最後一次機會，搖出後即為最終禮物";
-          drawBtn.textContent = "🎋 再搖出一支最終籤！";
+          mainHeading.textContent = "已丟回滾輪！請再轉一次";
+          subHeading.textContent = "這是最後一次機會，轉出後即為最終禮物";
+          drawBtn.textContent = "🎰 再轉一次滾輪（最後機會）！";
         } else {
-          mainHeading.textContent = "搖出你的聖誕禮物";
+          mainHeading.textContent = "轉動滾輪抽出聖誕禮物";
           subHeading.textContent = "已自動排除你自己送的禮物";
-          drawBtn.textContent = "🎋 用力搖出一支籤！";
+          drawBtn.textContent = "🎰 啟動滾輪抽禮物！";
         }
       }
     }
 
+    // 啟動滾輪抽獎動畫
+    document.getElementById("drawTicketBtn").addEventListener("click", () => {
+      if (isLottoRunning) return;
+      const me = state.users[deviceId];
+      if (!me) { showToast("請先輸入姓名並轉出你的禮物編號！"); return; }
+      if (me.wonSlotId) { showToast("你已經抽過禮物囉，每人限抽一次！"); return; }
+
+      const allUndrawn = Object.values(state.slots).filter(s => s.giverId && !s.drawnBy);
+      let pool = getValidLotteryPool(Object.values(state.slots), me);
+
+      if (pool.length === 0) {
+        if (allUndrawn.length === 1 && allUndrawn[0].id === me.ownSlotId) {
+          showToast("目前全場只有你 1 人的禮物，請等其他同事加入才能避開自己喔！");
+        } else {
+          showToast("目前沒有可抽的禮物球囉！");
+        }
+        return;
+      }
+
+      // 重抽時避開剛丟回的那一顆球
+      if (lastThrownSlotId && pool.length > 1) {
+        pool = pool.filter(s => s.id !== lastThrownSlotId);
+      }
+
+      isLottoRunning = true;
+      const btn = document.getElementById("drawTicketBtn");
+      btn.disabled = true;
+      btn.textContent = "🎰 滾輪高速轉動中...";
+      lottoEngine.setMode("spinning");
+
+      // 旋轉約 1.35 秒後掉出金球，再過 0.45 秒彈出禮物提示卡
+      setTimeout(() => {
+        lottoEngine.setMode("dropping");
+      }, 1350);
+
+      setTimeout(() => {
+        btn.disabled = false;
+        isLottoRunning = false;
+        tempCandidateSlotId = pool[Math.floor(Math.random() * pool.length)].id;
+        renderAll();
+      }, 1850);
+    });
+
+    // 丟回重抽：保留滾輪機，播放金球退回與滾動動畫
+    document.getElementById("redrawBtn").addEventListener("click", async () => {
+      const me = state.users[deviceId];
+      if (!me || me.redrawUsed || isLottoRunning) return;
+      isLottoRunning = true;
+      lastThrownSlotId = tempCandidateSlotId;
+
+      await mutateRoom((data) => { if (data.users[deviceId]) data.users[deviceId].redrawUsed = true; });
+
+      tempCandidateSlotId = null;
+      lottoEngine.setMode("returning");
+      renderAll();
+
+      setTimeout(() => {
+        lottoEngine.setMode("idle");
+        isLottoRunning = false;
+        renderAll();
+      }, 700);
+    });
+
+    // 確定收下這份禮物（雲端交易鎖定）
+    document.getElementById("confirmTicketBtn").addEventListener("click", async () => {
+      if (!tempCandidateSlotId || isLottoRunning) return;
+      const targetId = tempCandidateSlotId;
+      const ok = await mutateRoom((data) => {
+        const user = data.users[deviceId];
+        if (!user || user.wonSlotId) return false;
+        const targetSlot = data.slots[targetId];
+        if (!targetSlot || targetSlot.drawnBy) {
+          showToast("這份禮物剛剛被別人搶先抽走了，請重新再轉一次！");
+          tempCandidateSlotId = null;
+          return false;
+        }
+        targetSlot.drawnBy = deviceId; targetSlot.drawnByName = user.name; user.wonSlotId = targetId;
+        return true;
+      });
+      if (ok) {
+        tempCandidateSlotId = null;
+        lastThrownSlotId = null;
+        lottoEngine.setMode("idle");
+        if (typeof confetti === "function") confetti({ particleCount: 75, spread: 65, origin: { y: 0.6 } });
+      } else {
+        lottoEngine.setMode("idle");
+        renderAll();
+      }
+    });
+
+    // ==================== 7. 階段 3 & 4：開箱紀錄與保密投票 ====================
     function renderPhase3And4Cards(slotArr, me) {
       const myOwnSlotId = me ? me.ownSlotId : "";
       const myWonSlotId = me ? me.wonSlotId : "";
@@ -882,16 +1461,30 @@
         </div>`).join("");
     }
 
-    // ==================== 4. 彈窗與抽籤投票互動 ====================
+    window.castVote = function(slotId) {
+      const me = state.users[deviceId];
+      if (!me) { showToast("請先輸入姓名並轉出號碼後才能投票！"); return; }
+      if (me.votedSlotId) { showToast("每人只能投一票，投票完成後不能修改！"); return; }
+      if (slotId === me.ownSlotId) { showToast("不能投給你自己送的禮物喔！"); return; }
+
+      showConfirm(`確定要把你唯一的一票投給 ${slotId} 號嗎？投出後不能修改！`, async () => {
+        await mutateRoom((data) => {
+          const user = data.users[deviceId];
+          if (!user || user.votedSlotId || slotId === user.ownSlotId) return false;
+          user.votedSlotId = slotId;
+          data.slots[slotId].votes = (data.slots[slotId].votes || 0) + 1;
+          return true;
+        });
+        showToast("投票已完成並鎖定！");
+      });
+    };
+
+    // ==================== 8. 填寫提示與開箱彈窗 ====================
     document.getElementById("editMyHintBtn").addEventListener("click", () => { if (state.users[deviceId]) openHintModal(state.users[deviceId].ownSlotId); });
     document.getElementById("editMyReceivedGiftBtn").addEventListener("click", () => { if (state.users[deviceId]?.wonSlotId) window.openGiftModal(state.users[deviceId].wonSlotId); });
 
-    document.getElementById("inputHint").addEventListener("input", () => {
-      document.getElementById("hintErrorMsg").classList.add("hidden");
-    });
-    document.getElementById("inputGiftName").addEventListener("input", () => {
-      document.getElementById("giftErrorMsg").classList.add("hidden");
-    });
+    document.getElementById("inputHint").addEventListener("input", () => document.getElementById("hintErrorMsg").classList.add("hidden"));
+    document.getElementById("inputGiftName").addEventListener("input", () => document.getElementById("giftErrorMsg").classList.add("hidden"));
 
     function openHintModal(slotId) {
       currentEditSlotId = slotId;
@@ -921,7 +1514,7 @@
         const hintVal = document.getElementById("inputHint").value.trim();
         if (hintVal.length < 6) {
           const errEl = document.getElementById("hintErrorMsg");
-          errEl.textContent = `文字太少囉！請至少輸入 6 個字才能儲存（目前 ${hintVal.length} 字）`;
+          errEl.textContent = `你的文字太少囉！請至少輸入 6 個字才能儲存（目前 ${hintVal.length} 字）`;
           errEl.classList.remove("hidden");
           document.getElementById("inputHint").focus();
           return;
@@ -944,102 +1537,7 @@
 
     document.getElementById("modalCloseBtn").addEventListener("click", () => document.getElementById("editModal").classList.add("hidden"));
 
-    // 搖籤筒抽籤
-    document.getElementById("drawTicketBtn").addEventListener("click", () => {
-      if (isShakingTube) return;
-      const me = state.users[deviceId];
-      if (!me) { showToast("請先輸入姓名並轉出你的禮物編號！"); return; }
-      if (me.wonSlotId) { showToast("你已經抽過禮物囉，每人限抽一次！"); return; }
-
-      const allUndrawn = Object.values(state.slots).filter(s => s.giverId && !s.drawnBy);
-      let pool = getValidLotteryPool(Object.values(state.slots), me);
-
-      if (pool.length === 0) {
-        if (allUndrawn.length === 1 && allUndrawn[0].id === me.ownSlotId) {
-          showToast("目前全場只有你 1 人的禮物，請等其他同事加入才能避開自己喔！");
-        } else {
-          showToast("目前沒有可抽的籤囉！");
-        }
-        return;
-      }
-
-      // 重抽時優先避開剛剛丟回的那一支籤
-      if (lastThrownSlotId && pool.length > 1) {
-        pool = pool.filter(s => s.id !== lastThrownSlotId);
-      }
-
-      isShakingTube = true;
-      const btn = document.getElementById("drawTicketBtn");
-      const tube = document.getElementById("bambooTubeWrapper");
-      btn.disabled = true; btn.textContent = "🎋 正在用力搖籤筒...";
-      tube.classList.add("shaking-tube");
-
-      setTimeout(() => {
-        tube.classList.remove("shaking-tube");
-        btn.disabled = false; isShakingTube = false;
-        tempCandidateSlotId = pool[Math.floor(Math.random() * pool.length)].id;
-        renderAll();
-      }, 1200);
-    });
-
-    // 丟回重抽：收回籤卡、保留下方籤筒並搖晃提示再抽一次
-    document.getElementById("redrawBtn").addEventListener("click", async () => {
-      const me = state.users[deviceId];
-      if (!me || me.redrawUsed || isShakingTube) return;
-      lastThrownSlotId = tempCandidateSlotId;
-      await mutateRoom((data) => { if (data.users[deviceId]) data.users[deviceId].redrawUsed = true; });
-      tempCandidateSlotId = null;
-      renderAll();
-      const tube = document.getElementById("bambooTubeWrapper");
-      tube.classList.add("shaking-tube");
-      setTimeout(() => tube.classList.remove("shaking-tube"), 650);
-    });
-
-    // 確定收下這支籤（雲端交易鎖定）
-    document.getElementById("confirmTicketBtn").addEventListener("click", async () => {
-      if (!tempCandidateSlotId) return;
-      const targetId = tempCandidateSlotId;
-      const ok = await mutateRoom((data) => {
-        const user = data.users[deviceId];
-        if (!user || user.wonSlotId) return false;
-        const targetSlot = data.slots[targetId];
-        if (!targetSlot || targetSlot.drawnBy) {
-          showToast("這支籤剛剛被別人搶先抽走了，請重新再搖一次！");
-          tempCandidateSlotId = null;
-          return false;
-        }
-        targetSlot.drawnBy = deviceId; targetSlot.drawnByName = user.name; user.wonSlotId = targetId;
-        return true;
-      });
-      if (ok) {
-        tempCandidateSlotId = null;
-        lastThrownSlotId = null;
-        if (typeof confetti === "function") confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
-      } else {
-        renderAll();
-      }
-    });
-
-    // 階段 4：嚴格一人一票保密投票
-    window.castVote = function(slotId) {
-      const me = state.users[deviceId];
-      if (!me) { showToast("請先輸入姓名並轉出號碼後才能投票！"); return; }
-      if (me.votedSlotId) { showToast("每人只能投一票，投票完成後不能修改！"); return; }
-      if (slotId === me.ownSlotId) { showToast("不能投給你自己送的禮物喔！"); return; }
-
-      showConfirm(`確定要把你唯一的一票投給 ${slotId} 號嗎？投出後不能修改！`, async () => {
-        await mutateRoom((data) => {
-          const user = data.users[deviceId];
-          if (!user || user.votedSlotId || slotId === user.ownSlotId) return false;
-          user.votedSlotId = slotId;
-          data.slots[slotId].votes = (data.slots[slotId].votes || 0) + 1;
-          return true;
-        });
-        showToast("投票已完成並鎖定！");
-      });
-    };
-
-    // ==================== 5. 主辦人主控台 ====================
+    // ==================== 9. 主辦人主控台 ====================
     document.getElementById("hostTriggerBtn").addEventListener("click", () => {
       const panel = document.getElementById("hostPanel");
       if (!panel.classList.contains("hidden")) { panel.classList.add("hidden"); return; }
@@ -1050,9 +1548,7 @@
       setTimeout(() => document.getElementById("pwdInput").focus(), 100);
     });
 
-    document.getElementById("pwdInput").addEventListener("input", () => {
-      document.getElementById("pwdErrorMsg").classList.add("hidden");
-    });
+    document.getElementById("pwdInput").addEventListener("input", () => document.getElementById("pwdErrorMsg").classList.add("hidden"));
     document.getElementById("pwdCancelBtn").addEventListener("click", () => document.getElementById("pwdModal").classList.add("hidden"));
     document.getElementById("pwdConfirmBtn").addEventListener("click", () => {
       if (document.getElementById("pwdInput").value === HOST_PWD) {
@@ -1098,6 +1594,7 @@
       if (!isHostUnlocked) return;
       showConfirm("確定要清空雲端所有測試資料，恢復成全新狀態嗎？", async () => {
         tempCandidateSlotId = null; lastThrownSlotId = null; currentRotation = 0;
+        lottoEngine.setMode("idle");
         const canvas = document.getElementById("wheelCanvas");
         if (canvas) canvas.style.transform = "rotate(0deg)";
         await mutateRoom((data) => {
@@ -1107,10 +1604,6 @@
         showToast("已清空所有測試資料！");
       });
     });
-
-    function escapeHtml(str) {
-      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
-    }
 
     initGate();
   </script>
