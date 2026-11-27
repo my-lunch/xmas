@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>2026 久違了 聖誕交換禮物大會</title>
 
   <!-- LINE 分享預覽設定：避免抓取主辦人主控台或頁面隱藏文字 -->
@@ -10,6 +10,7 @@
   <meta property="og:description" content=" " />
   <meta name="description" content=" " />
 
+  <!-- Tailwind CSS、彩花特效與字體 -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -41,18 +42,18 @@
       transition: transform 3.6s cubic-bezier(0.14, 0.86, 0.18, 1);
     }
 
-    /* 神祕禮物提示卡彈出動畫 */
+    /* 神祕禮物提示卡與勝利卡彈出動畫 */
     @keyframes cardPopUp {
       0% { transform: translateY(26px) scale(0.9); opacity: 0; }
-      65% { transform: translateY(-6px) scale(1.02); opacity: 1; }
+      65% { transform: translateY(-6px) scale(1.03); opacity: 1; }
       100% { transform: translateY(0) scale(1); opacity: 1; }
     }
-    .card-pop { animation: cardPopUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .card-pop { animation: cardPopUp 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
-    /* 金色光暈呼吸（門禁、轉盤外框與輪到自己的提示看板） */
+    /* 金色光暈呼吸 */
     @keyframes goldPulse {
       0%, 100% { box-shadow: 0 0 16px rgba(212, 175, 55, 0.35); }
-      50% { box-shadow: 0 0 32px rgba(247, 231, 180, 0.72); }
+      50% { box-shadow: 0 0 32px rgba(247, 231, 180, 0.75); }
     }
     .gold-glow { animation: goldPulse 2.2s ease-in-out infinite; }
 
@@ -80,7 +81,7 @@
       <div class="space-y-3">
         <input id="gatePwdInput" type="password" inputmode="numeric" placeholder="輸入入場密碼" class="w-full text-center tracking-widest text-xl font-black px-4 py-3.5 rounded-2xl border-2 border-stone-300 focus:border-emerald-800 focus:outline-none bg-white" />
         <p id="gateErrorMsg" class="hidden text-xs font-bold text-red-600">入場密碼錯誤，請再確認一次！</p>
-        <button id="gateEnterBtn" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#14532d] to-[#0f3d21] text-[#f7e7b4] font-black text-base shadow-lg btn-press">進入活動</button>
+        <button id="gateEnterBtn" type="button" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#14532d] to-[#0f3d21] text-[#f7e7b4] font-black text-base shadow-lg btn-press">進入活動</button>
       </div>
     </div>
   </div>
@@ -131,10 +132,10 @@
 
       <!-- 4 階段切換按鈕 -->
       <div class="grid grid-cols-2 gap-2">
-        <button data-set-phase="1" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">1️⃣ 轉盤抽號與寫提示</button>
-        <button data-set-phase="2" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">2️⃣ 大樂透接力抽禮物</button>
-        <button data-set-phase="3" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">3️⃣ 大開箱登記禮物</button>
-        <button data-set-phase="4" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">4️⃣ 不記名投最爛禮物</button>
+        <button type="button" data-set-phase="1" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">1️⃣ 轉盤抽號與寫提示</button>
+        <button type="button" data-set-phase="2" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">2️⃣ 大樂透接力抽禮物</button>
+        <button type="button" data-set-phase="3" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">3️⃣ 大開箱登記禮物</button>
+        <button type="button" data-set-phase="4" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">4️⃣ 不記名投最爛禮物</button>
       </div>
 
       <!-- 階段 2 接力指揮區 -->
@@ -189,13 +190,14 @@
       </div>
     </section>
 
-    <!-- 已轉出號碼成員：個人狀態卡（名字不加括號） -->
+    <!-- 已轉出號碼成員：個人狀態卡（名字不加括號，清楚區分送出與抽中） -->
     <section id="myStatusCard" class="hidden rounded-2xl bg-emerald-950/95 border border-[#d4af37]/60 p-4 shadow-lg space-y-3">
       <div class="flex items-center justify-between gap-3">
         <div class="space-y-1">
           <p class="text-xs text-emerald-200/80">你送出的禮物編號</p>
-          <p class="text-xl font-black text-[#f7e7b4] flex items-baseline gap-2.5">
+          <p class="text-xl font-black text-[#f7e7b4] flex items-baseline gap-2">
             <span id="myOwnNumberText"></span>
+            <span class="text-emerald-500/60 text-sm font-normal">｜</span>
             <span id="myOwnNameText" class="text-lg font-bold text-white"></span>
           </p>
         </div>
@@ -207,7 +209,7 @@
         </div>
       </div>
       <div id="myActionRow" class="pt-1">
-        <button id="editMyHintBtn" type="button" class="w-full py-2.5 rounded-xl bg-[#d4af37] text-emerald-950 font-black text-sm btn-press shadow">填寫你的禮物提示</button>
+        <button id="editMyHintBtn" type="button" class="w-full py-2.5 rounded-xl bg-[#d4af37] text-emerald-950 font-black text-sm btn-press shadow">填寫禮物提示</button>
         <button id="editMyReceivedGiftBtn" type="button" class="hidden w-full py-3 rounded-xl bg-gradient-to-r from-[#f7e7b4] to-[#d4af37] text-emerald-950 font-black text-sm btn-press shadow">🎁 請填寫收到的禮物內容</button>
       </div>
     </section>
@@ -265,7 +267,7 @@
 
           <!-- 輪到自己時顯示的啟動按鈕 -->
           <button id="drawTicketBtn" type="button" class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#f7e7b4] via-[#d4af37] to-[#b48a28] text-emerald-950 text-lg font-black shadow-xl btn-press tracking-wide">
-            🎱 啟動大樂透機抽禮物！
+            🎱 啟動大樂透開獎機！
           </button>
 
           <!-- 非自己回合時顯示的現場觀看提示 -->
@@ -273,8 +275,8 @@
           </div>
         </div>
 
-        <!-- 已抽定結果（乾淨俐落實體紅金卡片，號碼背後無透明框） -->
-        <div id="lotteryResultBox" class="hidden relative z-10 space-y-4 py-3">
+        <!-- 已抽定結果（乾淨俐落實體紅金卡片，號碼背後絕無透明框） -->
+        <div id="lotteryResultBox" class="hidden relative z-10 space-y-4 py-3 card-pop">
           <p class="text-sm font-black text-[#f7e7b4]">🎉 抽獎完成！請領取你的聖誕禮物</p>
           <div class="mx-auto max-w-[230px] py-6 px-6 rounded-2xl bg-[#991b1b] border-4 border-[#d4af37] text-[#fcfaf5] shadow-2xl">
             <span class="text-xs font-bold text-[#f7e7b4] block tracking-widest mb-1.5">抽中禮物編號</span>
@@ -293,7 +295,7 @@
     </section>
 
     <!-- ==================== 正式開票結果看板 ==================== -->
-    <section id="resultBanner" class="hidden rounded-3xl bg-gradient-to-b from-[#7f1d1d] to-[#450a0a] border-2 border-[#f7e7b4] p-5 text-center shadow-2xl space-y-3">
+    <section id="resultBanner" class="hidden rounded-3xl bg-gradient-to-b from-[#7f1d1d] to-[#450a0a] border-2 border-[#f7e7b4] p-5 text-center shadow-2xl space-y-3 card-pop">
       <div class="text-3xl">👑🧋</div>
       <h2 class="text-xl sm:text-2xl font-black text-[#f7e7b4] leading-snug">
         本屆最爛禮物大苦主<br/>
@@ -316,7 +318,7 @@
         <button id="modalCloseBtn" type="button" class="w-8 h-8 rounded-full bg-stone-200 text-stone-700 font-bold">✕</button>
       </div>
 
-      <!-- 你的禮物提示（介面不放字數提示，儲存時不足 6 字跳紅字提醒） -->
+      <!-- 你的禮物提示（介面不放任何字數提示，儲存時不足 6 字跳紅字提醒） -->
       <div id="modalHintFields" class="space-y-2">
         <div>
           <label class="block text-xs font-bold text-stone-600 mb-1.5">你的禮物提示</label>
@@ -398,28 +400,44 @@
     const ENTRY_PWD = "2026";
     const HOST_PWD = "1234";
 
-    // ==================== 2. Web Audio API 專屬音效系統 ====================
+    // ==================== 2. 可愛聖誕音樂盒 Web Audio API 引擎 (iOS Safari 完全保證) ====================
     const SoundFX = {
       ctx: null,
       muted: false,
+      unlocked: false,
       timers: [],
 
-      init() {
-        if (!this.ctx) {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          if (AudioCtx) this.ctx = new AudioCtx();
-        }
-        if (this.ctx && this.ctx.state === "suspended") {
-          this.ctx.resume().catch(() => {});
-        }
+      /**
+       * 同步解鎖 AudioContext（必須在使用者點擊瞬間、任何 await 之前呼叫）
+       * 透過播放 1-sample 靜音緩衝區，徹底解鎖 iOS Safari / LINE 內建瀏覽器音訊限制
+       */
+      unlock() {
+        try {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            this.ctx = new AudioCtx();
+          }
+          if (this.ctx.state === "suspended") {
+            this.ctx.resume().catch(() => {});
+          }
+          if (!this.unlocked && this.ctx) {
+            const silentBuf = this.ctx.createBuffer(1, 1, 22050);
+            const src = this.ctx.createBufferSource();
+            src.buffer = silentBuf;
+            src.connect(this.ctx.destination);
+            src.start(0);
+            this.unlocked = true;
+          }
+        } catch (e) {}
       },
 
       toggleMute() {
-        this.init();
+        this.unlock();
         this.muted = !this.muted;
         const btn = document.getElementById("soundToggleBtn");
         if (btn) btn.textContent = this.muted ? "🔇" : "🔊";
-        if (!this.muted) this.playClick();
+        if (!this.muted) this.playButtonPop();
       },
 
       clearTimers() {
@@ -427,36 +445,89 @@
         this.timers = [];
       },
 
-      // 清脆按鍵回饋音
-      playClick() {
+      /**
+       * 內部輔助：演奏單一可愛木琴 / 聖誕八音盒音符（正弦波 + 高八度泛音）
+       */
+      playBellNote(freq, offsetSec, durationSec, volume = 0.2, type = "triangle", shimmer = true) {
         if (this.muted) return;
-        this.init();
+        this.unlock();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime + offsetSec;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(volume, now + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + durationSec + 0.03);
+
+        // 加上高八度清亮八音盒鈴聲泛音，讓音色聽起來可可愛愛
+        if (shimmer) {
+          const over = this.ctx.createOscillator();
+          const oGain = this.ctx.createGain();
+          over.type = "sine";
+          over.frequency.setValueAtTime(freq * 2, now);
+          oGain.gain.setValueAtTime(0.0001, now);
+          oGain.gain.linearRampToValueAtTime(volume * 0.32, now + 0.008);
+          oGain.gain.exponentialRampToValueAtTime(0.0001, now + Math.min(durationSec * 0.75, 0.35));
+          over.connect(oGain);
+          oGain.connect(this.ctx.destination);
+          over.start(now);
+          over.stop(now + durationSec + 0.03);
+        }
+      },
+
+      // 1. 一般大按鈕：可愛 Q 彈馬林巴「啵！」
+      playButtonPop() {
+        if (this.muted) return;
+        this.unlock();
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(640, now);
-        osc.frequency.exponentialRampToValueAtTime(1020, now + 0.05);
-        gain.gain.setValueAtTime(0.18, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.068);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(920, now + 0.06);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.072);
+        osc.stop(now + 0.1);
       },
 
-      // 階段 1 轉盤專用：木質撥片「答、答、答」隨轉速由快漸慢，最後接中獎和弦
+      // 2. 通過 2026 門禁：可愛聖誕八音盒歡迎琶音
+      playWelcome() {
+        if (this.muted) return;
+        this.unlock();
+        const notes = [
+          { f: 523.25, t: 0.00, d: 0.22 }, // C5
+          { f: 659.25, t: 0.09, d: 0.22 }, // E5
+          { f: 783.99, t: 0.18, d: 0.24 }, // G5
+          { f: 1046.50, t: 0.28, d: 0.45 }, // C6
+          { f: 1318.51, t: 0.38, d: 0.55 }  // E6
+        ];
+        notes.forEach(n => this.playBellNote(n.f, n.t, n.d, 0.2, "sine", true));
+      },
+
+      // 3. 階段 1 轉盤：清脆木質撥片「答、答、答」隨轉速由快漸慢
       playWheelTick(pitchBoost = 0) {
         if (this.muted || !this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = "square";
-        osc.frequency.setValueAtTime(880 + pitchBoost, now);
-        osc.frequency.exponentialRampToValueAtTime(250, now + 0.028);
-        gain.gain.setValueAtTime(0.11, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.032);
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(920 + pitchBoost, now);
+        osc.frequency.exponentialRampToValueAtTime(320, now + 0.026);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.032);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
@@ -465,7 +536,7 @@
 
       playWheelSpin() {
         if (this.muted) return;
-        this.init();
+        this.unlock();
         this.clearTimers();
         const totalTicks = 30;
         let elapsed = 0;
@@ -474,184 +545,241 @@
           const interval = 48 + Math.pow(progress, 2.5) * 245;
           elapsed += interval;
           if (elapsed > 3520) break;
-          this.timers.push(setTimeout(() => this.playWheelTick((1 - progress) * 220), elapsed));
+          this.timers.push(setTimeout(() => this.playWheelTick((1 - progress) * 240), elapsed));
         }
-        // 轉盤停下時播放清脆中獎和弦
-        this.timers.push(setTimeout(() => this.playWheelWinChord(), 3650));
+        this.timers.push(setTimeout(() => this.playWheelWin(), 3640));
       },
 
-      playWheelWinChord() {
+      // 4. 轉盤停下中獎：清亮可愛慶祝和弦
+      playWheelWin() {
         if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        [587.33, 739.99, 880, 1174.66].forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = "triangle";
-          const start = now + idx * 0.07;
-          osc.frequency.setValueAtTime(freq, start);
-          gain.gain.setValueAtTime(0.22, start);
-          gain.gain.exponentialRampToValueAtTime(0.001, start + 0.42);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(start);
-          osc.stop(start + 0.45);
-        });
+        this.unlock();
+        const chord = [
+          { f: 587.33, t: 0.00, d: 0.25 }, // D5
+          { f: 739.99, t: 0.07, d: 0.25 }, // F#5
+          { f: 880.00, t: 0.14, d: 0.30 }, // A5
+          { f: 1174.66, t: 0.22, d: 0.55 }, // D6
+          { f: 1479.98, t: 0.30, d: 0.60 }  // F#6
+        ];
+        chord.forEach(n => this.playBellNote(n.f, n.t, n.d, 0.2, "triangle", true));
       },
 
-      // 階段 2 大樂透機專用：彩球翻滾彈跳聲 + 掉球「啵！登登！」
+      // 5. 儲存 6 字以上禮物提示：魔法盒「叮～亮晶晶！」
+      playHintSaved() {
+        if (this.muted) return;
+        this.unlock();
+        [
+          { f: 659.25, t: 0.00, d: 0.18 }, // E5
+          { f: 987.77, t: 0.08, d: 0.22 }, // B5
+          { f: 1318.51, t: 0.17, d: 0.45 } // E6
+        ].forEach(n => this.playBellNote(n.f, n.t, n.d, 0.2, "sine", true));
+      },
+
+      // 6. 主辦人切換階段：仙女風鈴轉場音效（全場同步）
+      playPhaseChange() {
+        if (this.muted) return;
+        this.unlock();
+        [
+          { f: 783.99, t: 0.00, d: 0.22 }, // G5
+          { f: 1046.50, t: 0.10, d: 0.24 }, // C6
+          { f: 1174.66, t: 0.20, d: 0.38 }, // D6
+          { f: 1567.98, t: 0.30, d: 0.55 }  // G6
+        ].forEach(n => this.playBellNote(n.f, n.t, n.d, 0.18, "sine", true));
+      },
+
+      // 7. 階段 2 輪到你抽獎：元氣可愛「叮咚～換你囉！」
+      playTurnNotify() {
+        if (this.muted) return;
+        this.unlock();
+        this.playBellNote(880.00, 0.00, 0.26, 0.24, "sine", true);    // A5
+        this.playBellNote(1174.66, 0.16, 0.48, 0.26, "sine", true);   // D6
+        this.playBellNote(1760.00, 0.24, 0.32, 0.12, "sine", false);  // A6 sparkle
+      },
+
+      // 8. 階段 2 大樂透滾輪翻滾：俏皮彈跳彩球「啵啵啵！」
       playLottoBounce() {
         if (this.muted || !this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = "sine";
-        const baseFreq = 290 + Math.random() * 440;
+        const baseFreq = 340 + Math.random() * 480;
         osc.frequency.setValueAtTime(baseFreq, now);
-        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.48, now + 0.045);
-        gain.gain.setValueAtTime(0.14, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.065);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.55, now + 0.045);
+        gain.gain.setValueAtTime(0.16, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.065);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.07);
+        osc.stop(now + 0.072);
       },
 
-      playLotterySpin() {
+      playLottoRolling() {
         if (this.muted) return;
-        this.init();
+        this.unlock();
         this.clearTimers();
-        for (let t = 40; t <= 1300; t += 68) {
-          const jitter = Math.floor(Math.random() * 24);
+        for (let t = 35; t <= 1280; t += 65) {
+          const jitter = Math.floor(Math.random() * 20);
           this.timers.push(setTimeout(() => this.playLottoBounce(), t + jitter));
         }
-        this.timers.push(setTimeout(() => this.playLottoDrop(), 1350));
+        this.timers.push(setTimeout(() => this.playBallDrop(), 1340));
       },
 
-      playLottoDrop() {
+      // 9. 彩球掉出滑道：可愛「啵咿～叮叮！」
+      playBallDrop() {
         if (this.muted) return;
-        this.init();
+        this.unlock();
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
 
         const popOsc = this.ctx.createOscillator();
         const popGain = this.ctx.createGain();
         popOsc.type = "sine";
-        popOsc.frequency.setValueAtTime(320, now);
-        popOsc.frequency.exponentialRampToValueAtTime(940, now + 0.09);
-        popGain.gain.setValueAtTime(0.24, now);
-        popGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+        popOsc.frequency.setValueAtTime(340, now);
+        popOsc.frequency.exponentialRampToValueAtTime(1020, now + 0.09);
+        popGain.gain.setValueAtTime(0.26, now);
+        popGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
         popOsc.connect(popGain);
         popGain.connect(this.ctx.destination);
         popOsc.start(now);
-        popOsc.stop(now + 0.12);
+        popOsc.stop(now + 0.13);
 
-        [{ f: 783.99, t: 0.16, d: 0.18 }, { f: 1046.5, t: 0.30, d: 0.42 }].forEach(c => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(c.f, now + c.t);
-          gain.gain.setValueAtTime(0.24, now + c.t);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + c.t + c.d);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now + c.t);
-          osc.stop(now + c.t + c.d + 0.02);
-        });
+        this.playBellNote(783.99, 0.14, 0.22, 0.24, "triangle", true);  // G5
+        this.playBellNote(1046.50, 0.26, 0.45, 0.26, "triangle", true); // C6
       },
 
-      // 階段 2 輪到自己抽獎時的提醒叮咚聲
-      playTurnNotify() {
+      // 10. 按下「🔄 再抽一次」：可愛滑音「咻～咕嚕！」把球退回滾輪
+      playRedrawSwoosh() {
         if (this.muted) return;
-        this.init();
+        this.unlock();
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
-        [{ f: 880, t: 0, d: 0.22 }, { f: 1174.66, t: 0.16, d: 0.35 }].forEach(n => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(n.f, now + n.t);
-          gain.gain.setValueAtTime(0.22, now + n.t);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now + n.t);
-          osc.stop(now + n.t + n.d + 0.02);
-        });
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(860, now);
+        osc.frequency.exponentialRampToValueAtTime(320, now + 0.18);
+        osc.frequency.exponentialRampToValueAtTime(640, now + 0.30);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.34);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.36);
       },
 
-      // 階段 2 確認領獎「✨ 就決定是它！」歡樂過關領獎音樂（明亮上行琶音＋勝利和弦）
-      playGiftWin() {
+      // 11. 👑 主角音效：「🎉 抽獎完成！請領取你的聖誕禮物」超可愛歡樂 2.5 秒聖誕領獎勝利音樂！
+      playClaimVictoryMusic() {
         if (this.muted) return;
-        this.init();
+        this.unlock();
         if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const arp = [
-          { f: 523.25, t: 0.00, d: 0.14 }, // C5
-          { f: 659.25, t: 0.09, d: 0.14 }, // E5
-          { f: 783.99, t: 0.18, d: 0.14 }, // G5
-          { f: 1046.5, t: 0.27, d: 0.20 }, // C6
-          { f: 987.77, t: 0.42, d: 0.12 }, // B5
-          { f: 1046.5, t: 0.52, d: 0.58 }, // C6 勝利長音
-          { f: 783.99, t: 0.52, d: 0.58 }, // G5 和聲
-          { f: 659.25, t: 0.52, d: 0.58 }  // E5 和聲
+
+        // 歡樂可愛主旋律（C5-E5-G5-C6-A5-G5-E5-G5-C6 聖誕禮物慶祝節奏）
+        const melody = [
+          { f: 523.25, t: 0.00, d: 0.18, v: 0.25 }, // C5
+          { f: 659.25, t: 0.15, d: 0.18, v: 0.25 }, // E5
+          { f: 783.99, t: 0.30, d: 0.18, v: 0.26 }, // G5
+          { f: 1046.50, t: 0.46, d: 0.34, v: 0.28 }, // C6!
+          { f: 880.00, t: 0.78, d: 0.20, v: 0.24 }, // A5
+          { f: 783.99, t: 0.96, d: 0.24, v: 0.24 }, // G5
+          { f: 659.25, t: 1.18, d: 0.18, v: 0.24 }, // E5
+          { f: 783.99, t: 1.35, d: 0.20, v: 0.26 }, // G5
+          { f: 1046.50, t: 1.56, d: 0.88, v: 0.30 }  // C6 大滿足結尾！
         ];
-        arp.forEach(n => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(n.f, now + n.t);
-          gain.gain.setValueAtTime(0.001, now + n.t);
-          gain.gain.linearRampToValueAtTime(0.2, now + n.t + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now + n.t);
-          osc.stop(now + n.t + n.d + 0.03);
+        melody.forEach(n => this.playBellNote(n.f, n.t, n.d, n.v, "triangle", true));
+
+        // 溫暖可愛伴奏和弦
+        const chords = [
+          { f: 261.63, t: 0.00, d: 0.44, v: 0.13 }, // C4
+          { f: 329.63, t: 0.46, d: 0.30, v: 0.14 }, // E4
+          { f: 349.23, t: 0.78, d: 0.36, v: 0.14 }, // F4
+          { f: 392.00, t: 1.18, d: 0.36, v: 0.14 }, // G4
+          { f: 523.25, t: 1.56, d: 0.88, v: 0.16 }, // C5
+          { f: 659.25, t: 1.56, d: 0.88, v: 0.15 }, // E5
+          { f: 783.99, t: 1.56, d: 0.88, v: 0.15 }  // G5
+        ];
+        chords.forEach(c => this.playBellNote(c.f, c.t, c.d, c.v, "sine", false));
+
+        // 結尾閃亮小星星鈴鐺連音
+        [1318.51, 1567.98, 2093.00].forEach((f, idx) => {
+          this.playBellNote(f, 1.72 + idx * 0.12, 0.45, 0.14, "sine", false);
         });
       },
 
-      // 階段 4 正式開票揭曉：全場同步頒獎號角音樂
+      // 12. 階段 3 登記開箱禮物：驚喜「登登～亮起來！」
+      playUnboxSurprise() {
+        if (this.muted) return;
+        this.unlock();
+        [
+          { f: 523.25, t: 0.00, d: 0.14 }, // C5
+          { f: 659.25, t: 0.10, d: 0.14 }, // E5
+          { f: 783.99, t: 0.20, d: 0.16 }, // G5
+          { f: 1174.66, t: 0.32, d: 0.48 }, // D6
+          { f: 1567.98, t: 0.44, d: 0.50 }  // G6
+        ].forEach(n => this.playBellNote(n.f, n.t, n.d, 0.22, "triangle", true));
+      },
+
+      // 13. 階段 4 投下最爛禮物：可愛果斷蓋章「啵－叮！」
+      playVoteStamp() {
+        if (this.muted) return;
+        this.unlock();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(420, now);
+        osc.frequency.exponentialRampToValueAtTime(190, now + 0.08);
+        gain.gain.setValueAtTime(0.24, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.11);
+
+        this.playBellNote(880.00, 0.10, 0.22, 0.22, "triangle", true);
+        this.playBellNote(1174.66, 0.20, 0.35, 0.22, "triangle", true);
+      },
+
+      // 14. 🏆 正式開票揭曉：可愛小鼓連打鋪陳 ＋ 盛大聖誕慶祝號角與鈴鐺！
       playRevealFanfare() {
         if (this.muted) return;
-        this.init();
+        this.unlock();
         if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const melody = [
-          { f: 392.00, t: 0.00, d: 0.15 },
-          { f: 523.25, t: 0.16, d: 0.15 },
-          { f: 659.25, t: 0.32, d: 0.15 },
-          { f: 783.99, t: 0.48, d: 0.72 },
-          { f: 659.25, t: 0.48, d: 0.72 },
-          { f: 523.25, t: 0.48, d: 0.72 }
+
+        // 可愛前奏小鼓連打 (0.00s ~ 0.65s)
+        for (let i = 0; i < 8; i++) {
+          const t = i * 0.075;
+          const freq = 220 + i * 24;
+          this.playBellNote(freq, t, 0.06, 0.15 + i * 0.012, "triangle", false);
+        }
+
+        // 盛大揭曉號角旋律 (0.68s 起)
+        const base = 0.68;
+        const fanfare = [
+          { f: 523.25, t: base + 0.00, d: 0.16, v: 0.26 }, // C5
+          { f: 659.25, t: base + 0.15, d: 0.16, v: 0.26 }, // E5
+          { f: 783.99, t: base + 0.30, d: 0.16, v: 0.28 }, // G5
+          { f: 1046.50, t: base + 0.46, d: 0.85, v: 0.30 }, // C6!
+          { f: 783.99, t: base + 0.46, d: 0.85, v: 0.20 }, // G5 和聲
+          { f: 659.25, t: base + 0.46, d: 0.85, v: 0.20 }  // E5 和聲
         ];
-        melody.forEach(n => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          const filter = this.ctx.createBiquadFilter();
-          osc.type = "sawtooth";
-          filter.type = "lowpass";
-          filter.frequency.setValueAtTime(1900, now + n.t);
+        fanfare.forEach(n => this.playBellNote(n.f, n.t, n.d, n.v, "triangle", true));
 
-          osc.frequency.setValueAtTime(n.f, now + n.t);
-          gain.gain.setValueAtTime(0.001, now + n.t);
-          gain.gain.linearRampToValueAtTime(0.14, now + n.t + 0.025);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
-
-          osc.connect(filter);
-          filter.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now + n.t);
-          osc.stop(now + n.t + n.d + 0.04);
+        // 聖誕金鈴收尾閃耀
+        [1318.51, 1567.98, 1760.00, 2093.00].forEach((f, idx) => {
+          this.playBellNote(f, base + 0.60 + idx * 0.11, 0.52, 0.16, "sine", false);
         });
       }
     };
 
-    document.addEventListener("pointerdown", () => SoundFX.init(), { once: true });
+    // 全域同步解鎖監聽（保證 iOS Safari / 手機瀏覽器第一次碰螢幕就徹底啟用音訊）
+    ["touchstart", "pointerdown", "click"].forEach(evt => {
+      document.addEventListener(evt, () => SoundFX.unlock(), { passive: true });
+    });
     document.getElementById("soundToggleBtn").addEventListener("click", () => SoundFX.toggleMute());
 
-    // ==================== 3. 通用 UI 工具 ====================
+    // ==================== 3. 通用 UI 工具（絕不使用原生 alert / confirm） ====================
     let toastTimer = null;
     function showToast(msg) {
       const box = document.getElementById("toastBox");
@@ -668,12 +796,14 @@
       document.getElementById("confirmModal").classList.remove("hidden");
     }
     document.getElementById("confirmCancelBtn").addEventListener("click", () => {
-      SoundFX.playClick();
+      SoundFX.unlock();
+      SoundFX.playButtonPop();
       document.getElementById("confirmModal").classList.add("hidden");
       confirmCallback = null;
     });
     document.getElementById("confirmOkBtn").addEventListener("click", async () => {
-      SoundFX.playClick();
+      SoundFX.unlock();
+      SoundFX.playButtonPop();
       document.getElementById("confirmModal").classList.add("hidden");
       const fn = confirmCallback;
       confirmCallback = null;
@@ -717,7 +847,8 @@
     }
 
     document.getElementById("syncStatusPill").addEventListener("click", () => {
-      SoundFX.playClick();
+      SoundFX.unlock();
+      SoundFX.playButtonPop();
       const titleEl = document.getElementById("syncInfoTitle");
       const bodyEl = document.getElementById("syncInfoBody");
       if (syncStatus === "cloud") {
@@ -745,8 +876,8 @@
       document.getElementById("syncInfoModal").classList.remove("hidden");
     });
 
-    document.getElementById("syncInfoCloseBtn").addEventListener("click", () => { SoundFX.playClick(); document.getElementById("syncInfoModal").classList.add("hidden"); });
-    document.getElementById("syncInfoOkBtn").addEventListener("click", () => { SoundFX.playClick(); document.getElementById("syncInfoModal").classList.add("hidden"); });
+    document.getElementById("syncInfoCloseBtn").addEventListener("click", () => { SoundFX.unlock(); SoundFX.playButtonPop(); document.getElementById("syncInfoModal").classList.add("hidden"); });
+    document.getElementById("syncInfoOkBtn").addEventListener("click", () => { SoundFX.unlock(); SoundFX.playButtonPop(); document.getElementById("syncInfoModal").classList.add("hidden"); });
 
     // ==================== 5. 裝置身分與資料狀態 ====================
     let deviceId = "";
@@ -786,7 +917,6 @@
       return result;
     }
 
-    // 找出所有已領號且尚未抽獎的成員（依編號由小到大排序）
     function getUndrawnActiveParticipants(dataObj) {
       const slots = dataObj.slots || {};
       const users = dataObj.users || {};
@@ -808,17 +938,25 @@
     let db = null, roomRef = null, currentUser = null, useLocalFallback = false, isHostUnlocked = false;
     let currentEditSlotId = null, tempCandidateSlotId = null, rejectedSlotId = null;
     let isSpinning = false, isLottoRunning = false, currentRotation = 0;
+    let hasInitialSnapshot = false;
+    let prevPhase = 1;
     let prevRevealed = false;
     let prevTurnSlotId = "";
 
     // ==================== 6. 入場門禁 ====================
     function initGate() {
       try {
-        if (sessionStorage.getItem("xmas2026_gate_passed") === "1") unlockGateUI();
+        if (sessionStorage.getItem("xmas2026_gate_passed") === "1") unlockGateUI(false);
       } catch (e) {}
-      document.getElementById("gateEnterBtn").addEventListener("click", () => { SoundFX.playClick(); checkGatePwd(); });
+      document.getElementById("gateEnterBtn").addEventListener("click", () => {
+        SoundFX.unlock();
+        checkGatePwd();
+      });
       document.getElementById("gatePwdInput").addEventListener("keydown", (e) => {
-        if (e.key === "Enter") { SoundFX.playClick(); checkGatePwd(); }
+        if (e.key === "Enter") {
+          SoundFX.unlock();
+          checkGatePwd();
+        }
       });
       document.getElementById("gatePwdInput").addEventListener("input", () => {
         document.getElementById("gateErrorMsg").classList.add("hidden");
@@ -828,8 +966,10 @@
     function checkGatePwd() {
       if (document.getElementById("gatePwdInput").value.trim() === ENTRY_PWD) {
         try { sessionStorage.setItem("xmas2026_gate_passed", "1"); } catch (e) {}
-        unlockGateUI();
+        SoundFX.playWelcome();
+        unlockGateUI(true);
       } else {
+        SoundFX.playButtonPop();
         document.getElementById("gateErrorMsg").classList.remove("hidden");
       }
     }
@@ -863,34 +1003,44 @@
           useLocalFallback = false;
           if (snap.exists()) {
             const data = snap.data();
-            const newlyRevealed = !!data.revealed && !prevRevealed;
-            prevRevealed = !!data.revealed;
+            const nextPhase = data.phase || 1;
+            const nextRevealed = !!data.revealed;
+            const nextTurnId = data.currentTurnSlotId || "";
+
+            const phaseChanged = hasInitialSnapshot && nextPhase !== prevPhase;
+            const newlyRevealed = hasInitialSnapshot && nextRevealed && !prevRevealed;
 
             state.totalSlots = data.totalSlots || 20;
-            state.phase = data.phase || 1;
-            state.revealed = !!data.revealed;
-            state.currentTurnSlotId = data.currentTurnSlotId || "";
+            state.phase = nextPhase;
+            state.revealed = nextRevealed;
+            state.currentTurnSlotId = nextTurnId;
             state.lastRelayMsg = data.lastRelayMsg || "";
             state.slots = normalizeSlots(data.slots, state.totalSlots);
             state.users = data.users || {};
 
             const me = state.users[deviceId] || null;
-            // 階段 2 輪到自己時自動播放提醒叮咚聲
-            if (state.phase === 2 && me && !me.wonSlotId && state.currentTurnSlotId === me.ownSlotId && prevTurnSlotId !== me.ownSlotId) {
-              SoundFX.playTurnNotify();
-            }
-            prevTurnSlotId = state.currentTurnSlotId;
+            const becameMyTurn = hasInitialSnapshot && state.phase === 2 && me && !me.wonSlotId && nextTurnId === me.ownSlotId && prevTurnSlotId !== me.ownSlotId;
+
+            prevPhase = nextPhase;
+            prevRevealed = nextRevealed;
+            prevTurnSlotId = nextTurnId;
+            hasInitialSnapshot = true;
 
             if (!isSpinning && !isLottoRunning) renderAll();
 
-            // 全場同步開票號角與彩花
+            // 同步音效事件
             if (newlyRevealed) {
               SoundFX.playRevealFanfare();
               if (typeof confetti === "function") {
-                confetti({ particleCount: 95, spread: 75, origin: { y: 0.6 } });
+                confetti({ particleCount: 100, spread: 80, origin: { y: 0.58 } });
               }
+            } else if (phaseChanged) {
+              SoundFX.playPhaseChange();
+            } else if (becameMyTurn) {
+              SoundFX.playTurnNotify();
             }
           } else {
+            hasInitialSnapshot = true;
             setDoc(roomRef, state).catch(err => enableLocalMode(err?.message || String(err)));
           }
         }, (err) => {
@@ -905,15 +1055,17 @@
       useLocalFallback = true;
       updateSyncPill("local", errMsg);
       try {
-        const saved = localStorage.getItem("xmas2026_relay_fallback");
+        const saved = localStorage.getItem("xmas2026_cute_fallback");
         if (saved) state = JSON.parse(saved);
       } catch (e) {}
       state.totalSlots = state.totalSlots || 20;
       state.currentTurnSlotId = state.currentTurnSlotId || "";
       state.lastRelayMsg = state.lastRelayMsg || "";
       state.slots = normalizeSlots(state.slots, state.totalSlots);
+      prevPhase = state.phase;
       prevRevealed = !!state.revealed;
       prevTurnSlotId = state.currentTurnSlotId;
+      hasInitialSnapshot = true;
       renderAll();
     }
 
@@ -921,18 +1073,25 @@
       if (useLocalFallback) {
         const res = updaterFn(state);
         if (res === false) return false;
+        const phaseChanged = state.phase !== prevPhase;
         const newlyRevealed = !!state.revealed && !prevRevealed;
-        prevRevealed = !!state.revealed;
         const me = state.users[deviceId] || null;
-        if (state.phase === 2 && me && !me.wonSlotId && state.currentTurnSlotId === me.ownSlotId && prevTurnSlotId !== me.ownSlotId) {
-          SoundFX.playTurnNotify();
-        }
+        const becameMyTurn = state.phase === 2 && me && !me.wonSlotId && state.currentTurnSlotId === me.ownSlotId && prevTurnSlotId !== me.ownSlotId;
+
+        prevPhase = state.phase;
+        prevRevealed = !!state.revealed;
         prevTurnSlotId = state.currentTurnSlotId;
-        try { localStorage.setItem("xmas2026_relay_fallback", JSON.stringify(state)); } catch (e) {}
+
+        try { localStorage.setItem("xmas2026_cute_fallback", JSON.stringify(state)); } catch (e) {}
         if (!isSpinning && !isLottoRunning) renderAll();
+
         if (newlyRevealed) {
           SoundFX.playRevealFanfare();
-          if (typeof confetti === "function") confetti({ particleCount: 95, spread: 75, origin: { y: 0.6 } });
+          if (typeof confetti === "function") confetti({ particleCount: 100, spread: 80, origin: { y: 0.58 } });
+        } else if (phaseChanged) {
+          SoundFX.playPhaseChange();
+        } else if (becameMyTurn) {
+          SoundFX.playTurnNotify();
         }
         return true;
       }
@@ -1297,14 +1456,12 @@
       const slotArr = Object.values(state.slots).sort((a, b) => a.id.localeCompare(b.id));
       const totalCount = slotArr.length;
 
-      // 主辦人總人數輸入框同步
       const countInput = document.getElementById("slotCountInput");
       if (document.activeElement !== countInput) countInput.value = state.totalSlots;
 
-      // 主辦人階段 2 接力指揮區同步
       renderHostRelayControls();
 
-      // 頁首個人徽章（不含括號）
+      // 頁首個人徽章（無括號）
       const userBadge = document.getElementById("myUserBadge");
       if (me) {
         userBadge.classList.remove("hidden");
@@ -1341,7 +1498,6 @@
         btn.classList.toggle("text-white", p !== state.phase);
       });
 
-      // 轉盤卡片 vs 個人狀態卡
       const wheelCard = document.getElementById("wheelRegisterCard");
       const myStatusCard = document.getElementById("myStatusCard");
       if (!me) {
@@ -1374,7 +1530,7 @@
         if (state.phase === 1) {
           myActionRow.classList.remove("hidden");
           editHintBtn.classList.remove("hidden");
-          editHintBtn.textContent = mySlot && mySlot.hint ? "修改你的禮物提示" : "填寫你的禮物提示";
+          editHintBtn.textContent = mySlot && mySlot.hint ? "修改禮物提示" : "填寫禮物提示";
         } else if (state.phase === 3 && me.wonSlotId) {
           myActionRow.classList.remove("hidden");
           editReceivedBtn.classList.remove("hidden");
@@ -1495,8 +1651,9 @@
     }
 
     document.getElementById("spinWheelBtn").addEventListener("click", async () => {
+      SoundFX.unlock();
       if (isSpinning) return;
-      SoundFX.playClick();
+      SoundFX.playButtonPop();
       const name = document.getElementById("regNameInput").value.trim();
       if (!name) { showToast("請先在上方輸入你的姓名或暱稱再轉盤！"); document.getElementById("regNameInput").focus(); return; }
 
@@ -1538,16 +1695,15 @@
       }, 3700);
     });
 
-    // 階段 1 提示牆：有人轉出號碼才動態新增一行
+    // 階段 1 提示牆：僅顯示已有人領號的列，絕不預渲染 20 個空行
     function renderPhase1Hints(slotArr) {
       const joinedSlots = slotArr.filter(s => Boolean(s.giverId));
       const listEl = document.getElementById("hintsList");
 
       if (joinedSlots.length === 0) {
         listEl.innerHTML = `
-          <div class="rounded-2xl bg-black/25 border border-white/15 p-6 text-center space-y-1.5">
-            <p class="text-2xl">🎄</p>
-            <p class="text-sm font-bold text-[#f7e7b4]">目前還沒有人轉出號碼，快來搶頭香！</p>
+          <div class="rounded-2xl bg-black/25 border border-white/15 p-5 text-center">
+            <p class="text-sm font-bold text-[#f7e7b4]">🎄 還沒有人加入，快轉出你的禮物編號吧！</p>
           </div>
         `;
         return;
@@ -1560,7 +1716,7 @@
             <div class="flex items-center gap-3 min-w-0">
               <span class="w-11 h-11 rounded-xl bg-emerald-950 text-[#f7e7b4] font-black text-base flex items-center justify-center shrink-0">${fmtNum(slot.id, "text-[10px]")}</span>
               <div class="min-w-0">
-                <p class="font-bold text-base text-stone-900 truncate">${hasHint ? `「${escapeHtml(slot.hint)}」` : '已轉出號碼，填寫提示中...'}</p>
+                <p class="font-bold text-base text-stone-900 truncate">${hasHint ? `「${escapeHtml(slot.hint)}」` : '填寫提示中...'}</p>
               </div>
             </div>
             <span class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-lg ${hasHint ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-500'}">${hasHint ? '已投籤' : '填寫中'}</span>
@@ -1569,16 +1725,14 @@
     }
 
     // ==================== 11. 階段 2：大樂透開獎機 ＋ 接力輪流抽 ====================
-    // 計算合法彩球池：僅含已領號且未抽走、自動排除自己、並內建最後兩人防死結
     function getValidLotteryPool(slotArr, me, excludeSlotId = null) {
       const activeUndrawn = slotArr.filter(s => s.giverId && !s.drawnBy);
       const undrawnParticipants = getUndrawnActiveParticipants(state);
 
-      // 防最後兩人死結：若只剩 2 位未抽者，且另一人的禮物仍在池中，強制優先抽走另一人的禮物
+      // 防止最後兩人死結：剩最後 2 位未抽者且另一人的禮物仍在池中時優先鎖定
       if (me && undrawnParticipants.length === 2) {
         const other = undrawnParticipants.find(s => s.id !== me.ownSlotId);
         if (other && activeUndrawn.some(s => s.id === other.id)) {
-          // 若非重抽或重抽沒有其他球可選，鎖定另一人的禮物避免死結
           const nonRejectedOthers = activeUndrawn.filter(s => s.id !== me.ownSlotId && s.id !== excludeSlotId);
           if (!excludeSlotId || nonRejectedOthers.length <= 1 || other.id !== excludeSlotId) {
             return [other];
@@ -1588,14 +1742,14 @@
 
       let pool = me ? activeUndrawn.filter(s => s.id !== me.ownSlotId) : activeUndrawn;
 
-      // 單人測試模式防呆：若全場只有自己領號，允許抽尚未被領號的測試球
+      // 單人測試模式防呆：若全場只有自己領號，允許抽尚未領號的球以便實測
       if (pool.length === 0) {
         const anyUndrawn = slotArr.filter(s => !s.drawnBy);
         const anyOther = me ? anyUndrawn.filter(s => s.id !== me.ownSlotId) : anyUndrawn;
         pool = anyOther.length > 0 ? anyOther : anyUndrawn;
       }
 
-      // 重抽絕不重複：排除剛剛放棄的號碼（除非池中只剩唯一 1 顆）
+      // 重抽絕不重複：排除剛剛放棄的號碼
       if (excludeSlotId && pool.length > 1) {
         pool = pool.filter(s => s.id !== excludeSlotId);
       }
@@ -1613,7 +1767,6 @@
         `<span class="px-2.5 py-1 rounded-lg bg-white/10 text-[#f7e7b4] text-xs font-bold">✓ ${fmtNum(u.ownSlotId, "text-[9px]")} ${escapeHtml(u.name)}</span>`
       ).join("");
 
-      // 解析目前輪到誰（若尚未設定則預設為編號最小的未抽獎者）
       let effectiveTurnId = state.currentTurnSlotId;
       if (!effectiveTurnId || !state.slots[effectiveTurnId] || !state.slots[effectiveTurnId].giverId || (state.users[state.slots[effectiveTurnId].giverId]?.wonSlotId)) {
         effectiveTurnId = undrawnParticipants.length > 0 ? undrawnParticipants[0].id : "";
@@ -1623,23 +1776,22 @@
       const isMyTurn = Boolean(me && !me.wonSlotId && effectiveTurnId && me.ownSlotId === effectiveTurnId);
       const allDone = undrawnParticipants.length === 0 && Object.keys(state.users).length > 0;
 
-      // 渲染頂部超醒目即時輪值看板
       const turnBanner = document.getElementById("turnBannerBox");
       const turnMain = document.getElementById("turnBannerMain");
       const turnRelay = document.getElementById("turnBannerRelay");
 
       if (allDone) {
         turnBanner.className = "rounded-2xl p-4 text-center border-2 border-[#d4af37] bg-emerald-900/90 text-[#f7e7b4] shadow-xl space-y-1";
-        turnMain.textContent = "🎉 全場接力抽獎完成！準備進入大開箱！";
+        turnMain.textContent = "🎊 全員抽獎完成！";
       } else if (isMyTurn) {
         turnBanner.className = "rounded-2xl p-4 text-center border-2 border-[#fef08a] bg-gradient-to-r from-[#b45309] via-[#d4af37] to-[#b45309] text-emerald-950 shadow-2xl gold-glow space-y-1";
-        turnMain.textContent = "🔥 輪到你囉！快轉動大樂透機！";
+        turnMain.textContent = "🎯 現在輪到你抽禮物囉！";
       } else if (turnSlot) {
         turnBanner.className = "rounded-2xl p-4 text-center border-2 border-[#d4af37]/60 bg-black/45 text-[#f7e7b4] shadow-lg space-y-1";
-        turnMain.innerHTML = `🎯 目前輪到 ${fmtNum(turnSlot.id, "text-xs")} ${escapeHtml(turnSlot.giverName)} 抽禮物中...`;
+        turnMain.innerHTML = `⏳ 目前輪到 ${fmtNum(turnSlot.id, "text-xs")} ${escapeHtml(turnSlot.giverName)} 抽禮物中…`;
       } else {
         turnBanner.className = "rounded-2xl p-4 text-center border-2 border-white/20 bg-black/35 text-emerald-200 space-y-1";
-        turnMain.textContent = "等待成員完成報到轉盤...";
+        turnMain.textContent = "等待成員完成報到轉盤…";
       }
 
       if (state.lastRelayMsg) {
@@ -1649,7 +1801,6 @@
         turnRelay.classList.add("hidden");
       }
 
-      // 舞台各區塊顯示切換
       const headerBlock = document.getElementById("lotteryHeaderBlock");
       const mainHeading = document.getElementById("lotteryMainHeading");
       const subHeading = document.getElementById("lotterySubHeading");
@@ -1664,7 +1815,6 @@
       document.getElementById("topRedrawStatusBadge").textContent = hasUsedRedraw ? "重抽機會已使用" : "每人限重抽 1 次";
 
       if (me && me.wonSlotId && state.slots[me.wonSlotId]) {
-        // 自己已抽定完成
         headerBlock.classList.add("hidden");
         decisionBox.classList.add("hidden");
         machineStage.classList.add("hidden");
@@ -1680,7 +1830,6 @@
           relayBadge.classList.add("hidden");
         }
       } else if (isMyTurn && tempCandidateSlotId && state.slots[tempCandidateSlotId]) {
-        // 輪到自己且剛抽出一顆候選球
         headerBlock.classList.add("hidden");
         decisionBox.classList.remove("hidden");
         machineStage.classList.remove("hidden");
@@ -1705,7 +1854,6 @@
           row.classList.add("grid-cols-1");
         }
       } else {
-        // 待機畫面（輪到自己顯示按鈕；輪到別人隱藏按鈕顯示觀看提示）
         headerBlock.classList.remove("hidden");
         decisionBox.classList.add("hidden");
         machineStage.classList.remove("hidden");
@@ -1721,19 +1869,19 @@
           } else {
             mainHeading.textContent = "輪到你轉動大樂透機！";
             subHeading.textContent = "已自動排除你自己送的禮物";
-            drawBtn.textContent = "🎱 啟動大樂透機抽禮物！";
+            drawBtn.textContent = "🎱 啟動大樂透開獎機！";
           }
         } else {
           drawBtn.classList.add("hidden");
           waitTurnBox.classList.remove("hidden");
           if (allDone) {
-            mainHeading.textContent = "全場抽獎皆已完成！";
+            mainHeading.textContent = "🎊 全員抽獎完成！";
             subHeading.textContent = "等待主辦人切換至大開箱階段";
             waitTurnBox.textContent = "🎉 所有人都領到聖誕禮物囉！";
           } else if (turnSlot) {
             mainHeading.textContent = "接力抽獎進行中";
             subHeading.textContent = "抽中幾號的禮物，下一位就換幾號接棒！";
-            waitTurnBox.innerHTML = `請盯緊現場，輪到 ${fmtNum(turnSlot.id, "text-[10px]")} ${escapeHtml(turnSlot.giverName)} 抽獎中…`;
+            waitTurnBox.innerHTML = `⏳ 目前輪到 ${fmtNum(turnSlot.id, "text-[10px]")} ${escapeHtml(turnSlot.giverName)} 抽禮物中…`;
           } else {
             mainHeading.textContent = "等待抽獎開始";
             subHeading.textContent = "請先完成姓名與轉盤報到";
@@ -1745,8 +1893,9 @@
 
     // 啟動大樂透開獎機
     document.getElementById("drawTicketBtn").addEventListener("click", () => {
+      SoundFX.unlock();
       if (isLottoRunning) return;
-      SoundFX.playClick();
+      SoundFX.playButtonPop();
       const me = state.users[deviceId];
       if (!me) { showToast("請先輸入姓名並轉出你的禮物編號！"); return; }
       if (me.wonSlotId) { showToast("你已經抽過禮物囉，每人限抽一次！"); return; }
@@ -1762,11 +1911,11 @@
       btn.disabled = true;
       btn.textContent = "🎱 滾輪高速轉動中...";
       lottoEngine.setMode("spinning");
-      SoundFX.playLotterySpin();
+      SoundFX.playLottoRolling();
 
       setTimeout(() => {
         lottoEngine.setMode("dropping");
-      }, 1350);
+      }, 1340);
 
       setTimeout(() => {
         btn.disabled = false;
@@ -1774,14 +1923,15 @@
         const chosen = pool[Math.floor(Math.random() * pool.length)];
         tempCandidateSlotId = chosen.id;
         renderAll();
-      }, 1850);
+      }, 1840);
     });
 
-    // 點擊「🔄 再抽一次」（記住 rejectedSlotId，保證第二次絕不重複）
+    // 點擊「🔄 再抽一次」：播放可愛滑音並退回滾輪（保證第二次不重複）
     document.getElementById("redrawBtn").addEventListener("click", async () => {
+      SoundFX.unlock();
       const me = state.users[deviceId];
       if (!me || me.redrawUsed || isLottoRunning) return;
-      SoundFX.playClick();
+      SoundFX.playRedrawSwoosh();
       isLottoRunning = true;
       rejectedSlotId = tempCandidateSlotId;
 
@@ -1800,10 +1950,11 @@
       }, 700);
     });
 
-    // 點擊「✨ 就決定是它！」：播放領獎音樂＋放彩花＋自動計算接力棒下一位
+    // 點擊「✨ 就決定是它！」：先同步解鎖音訊 -> 寫入 Firestore -> 立即播放 2.5 秒可愛領獎勝利音樂＋彩花！
     document.getElementById("confirmTicketBtn").addEventListener("click", async () => {
+      SoundFX.unlock();
       if (!tempCandidateSlotId || isLottoRunning) return;
-      SoundFX.playClick();
+      SoundFX.playButtonPop();
       const targetId = tempCandidateSlotId;
 
       const ok = await mutateRoom((data) => {
@@ -1816,29 +1967,24 @@
           return false;
         }
 
-        // 鎖定得主
         targetSlot.drawnBy = deviceId;
         targetSlot.drawnByName = user.name;
         user.wonSlotId = targetId;
 
-        // 計算接力棒傳遞邏輯
         const targetGiverId = targetSlot.giverId;
         const targetGiverUser = targetGiverId ? data.users[targetGiverId] : null;
         const remainingUndrawn = getUndrawnActiveParticipants(data);
 
         if (targetGiverUser && !targetGiverUser.wonSlotId) {
-          // 抽中 #10，且 #10 還沒抽過 -> 接力棒直接傳給 #10
           data.currentTurnSlotId = targetId;
           data.lastRelayMsg = `👉 接力棒傳給 #${targetId} ${targetSlot.giverName}！`;
         } else if (remainingUndrawn.length > 0) {
-          // #10 已經抽過（形成迴圈）-> 自動挑選下一位尚未抽獎的成員
           const nextSlot = remainingUndrawn[0];
           data.currentTurnSlotId = nextSlot.id;
-          data.lastRelayMsg = `✨ 迴圈完成！自動接棒給下一位幸運兒 #${nextSlot.id} ${nextSlot.giverName}！`;
+          data.lastRelayMsg = `✨ 迴圈完成！自動接棒給下一位 #${nextSlot.id} ${nextSlot.giverName}！`;
         } else {
-          // 全場皆已抽完
           data.currentTurnSlotId = "";
-          data.lastRelayMsg = "🎉 全場接力抽獎完成！準備進入大開箱！";
+          data.lastRelayMsg = "🎊 全員抽獎完成！";
         }
         return true;
       });
@@ -1847,9 +1993,11 @@
         tempCandidateSlotId = null;
         rejectedSlotId = null;
         lottoEngine.setMode("idle");
-        SoundFX.playGiftWin();
+        // 播放可愛 2.5 秒領獎勝利音樂＋雙波段彩花
+        SoundFX.playClaimVictoryMusic();
         if (typeof confetti === "function") {
-          confetti({ particleCount: 90, spread: 70, origin: { y: 0.58 } });
+          confetti({ particleCount: 95, spread: 75, origin: { y: 0.58 } });
+          setTimeout(() => confetti({ particleCount: 55, spread: 95, origin: { y: 0.52 } }), 350);
         }
         renderAll();
       } else {
@@ -1917,38 +2065,45 @@
       if (maxVotes <= 0) { loserBox.innerHTML = `<p class="text-sm text-red-100">尚無投票紀錄</p>`; return; }
       loserBox.innerHTML = slotArr.filter(s => (s.votes || 0) === maxVotes).map(l => `
         <div class="bg-black/35 rounded-2xl p-4 border border-[#f7e7b4]/40 space-y-1">
-          <div class="text-base font-black text-[#f7e7b4]">${fmtNum(l.id, "text-[10px]")} ${escapeHtml(l.giverName || '神秘送禮人')} · ${l.votes} 票</div>
+          <div class="text-base font-black text-[#f7e7b4]">${fmtNum(l.id, "text-[10px]")} ｜ ${escapeHtml(l.giverName || '神秘送禮人')} · ${l.votes} 票</div>
           <div class="text-xl font-black text-white">禮物：${escapeHtml(l.gift || '未填寫')}</div>
         </div>`).join("");
     }
 
     // 開放投給任何已領號禮物（含自己送的禮物）
     window.castVote = function(slotId) {
-      SoundFX.playClick();
+      SoundFX.unlock();
+      SoundFX.playButtonPop();
       const me = state.users[deviceId];
       if (!me) { showToast("請先輸入姓名並轉出號碼後才能投票！"); return; }
       if (me.votedSlotId) { showToast("每人只能投一票，投票完成後不能修改！"); return; }
 
       const selfNote = slotId === me.ownSlotId ? "（這是你自己送的喔！）" : "";
       showConfirm(`確定要把你唯一的一票投給 ${slotId} 號嗎？${selfNote}投出後不能修改！`, async () => {
-        await mutateRoom((data) => {
+        SoundFX.unlock();
+        const ok = await mutateRoom((data) => {
           const user = data.users[deviceId];
           if (!user || user.votedSlotId) return false;
           user.votedSlotId = slotId;
           data.slots[slotId].votes = (data.slots[slotId].votes || 0) + 1;
           return true;
         });
-        showToast("投票已完成並鎖定！");
+        if (ok) {
+          SoundFX.playVoteStamp();
+          showToast("投票已完成並鎖定！");
+        }
       });
     };
 
     // ==================== 13. 提示與開箱彈窗 ====================
     document.getElementById("editMyHintBtn").addEventListener("click", () => {
-      SoundFX.playClick();
+      SoundFX.unlock();
+      SoundFX.playButtonPop();
       if (state.users[deviceId]) openHintModal(state.users[deviceId].ownSlotId);
     });
     document.getElementById("editMyReceivedGiftBtn").addEventListener("click", () => {
-      SoundFX.playClick();
+      SoundFX.unlock();
+      SoundFX.playButtonPop();
       if (state.users[deviceId]?.wonSlotId) window.openGiftModal(state.users[deviceId].wonSlotId);
     });
 
@@ -1966,7 +2121,8 @@
     }
 
     window.openGiftModal = function(slotId) {
-      SoundFX.playClick();
+      SoundFX.unlock();
+      SoundFX.playButtonPop();
       currentEditSlotId = slotId;
       document.getElementById("modalTitle").innerHTML = `${fmtNum(slotId, "text-[10px]")} 號收到的禮物內容`;
       document.getElementById("modalHintFields").classList.add("hidden");
@@ -1978,42 +2134,48 @@
     };
 
     document.getElementById("modalSaveBtn").addEventListener("click", async () => {
-      SoundFX.playClick();
+      SoundFX.unlock();
       if (!currentEditSlotId) return;
       const isHintMode = !document.getElementById("modalHintFields").classList.contains("hidden");
       if (isHintMode) {
         const hintVal = document.getElementById("inputHint").value.trim();
         if (hintVal.length < 6) {
+          SoundFX.playButtonPop();
           const errEl = document.getElementById("hintErrorMsg");
-          errEl.textContent = `你的文字太少了，請輸入至少 6 個字的禮物提示喔！（目前 ${hintVal.length} 字）`;
+          errEl.textContent = `文字太少了，請至少輸入 6 個字才能儲存喔！（目前已輸入 ${hintVal.length} 字）`;
           errEl.classList.remove("hidden");
           document.getElementById("inputHint").focus();
           return;
         }
-        await mutateRoom((data) => { if (data.slots[currentEditSlotId]) data.slots[currentEditSlotId].hint = hintVal; });
+        const ok = await mutateRoom((data) => { if (data.slots[currentEditSlotId]) data.slots[currentEditSlotId].hint = hintVal; });
+        if (ok) SoundFX.playHintSaved();
       } else {
         const giftVal = document.getElementById("inputGiftName").value.trim();
         if (!giftVal) {
+          SoundFX.playButtonPop();
           const errEl = document.getElementById("giftErrorMsg");
           errEl.textContent = "請填寫收到的禮物內容才能儲存喔！";
           errEl.classList.remove("hidden");
           document.getElementById("inputGiftName").focus();
           return;
         }
-        await mutateRoom((data) => { if (data.slots[currentEditSlotId]) data.slots[currentEditSlotId].gift = giftVal; });
+        const ok = await mutateRoom((data) => { if (data.slots[currentEditSlotId]) data.slots[currentEditSlotId].gift = giftVal; });
+        if (ok) SoundFX.playUnboxSurprise();
       }
       document.getElementById("editModal").classList.add("hidden");
       showToast("儲存成功！");
     });
 
     document.getElementById("modalCloseBtn").addEventListener("click", () => {
-      SoundFX.playClick();
+      SoundFX.unlock();
+      SoundFX.playButtonPop();
       document.getElementById("editModal").classList.add("hidden");
     });
 
     // ==================== 14. 主辦人主控台互動 ====================
     document.getElementById("hostTriggerBtn").addEventListener("click", () => {
-      SoundFX.playClick();
+      SoundFX.unlock();
+      SoundFX.playButtonPop();
       const panel = document.getElementById("hostPanel");
       if (!panel.classList.contains("hidden")) { panel.classList.add("hidden"); return; }
       if (isHostUnlocked) { panel.classList.remove("hidden"); return; }
@@ -2024,24 +2186,27 @@
     });
 
     document.getElementById("pwdInput").addEventListener("input", () => document.getElementById("pwdErrorMsg").classList.add("hidden"));
-    document.getElementById("pwdCancelBtn").addEventListener("click", () => { SoundFX.playClick(); document.getElementById("pwdModal").classList.add("hidden"); });
+    document.getElementById("pwdCancelBtn").addEventListener("click", () => { SoundFX.unlock(); SoundFX.playButtonPop(); document.getElementById("pwdModal").classList.add("hidden"); });
     document.getElementById("pwdConfirmBtn").addEventListener("click", () => {
-      SoundFX.playClick();
+      SoundFX.unlock();
       if (document.getElementById("pwdInput").value === HOST_PWD) {
+        SoundFX.playHintSaved();
         isHostUnlocked = true;
         document.getElementById("pwdModal").classList.add("hidden");
         document.getElementById("hostPanel").classList.remove("hidden");
         renderAll();
       } else {
+        SoundFX.playButtonPop();
         document.getElementById("pwdErrorMsg").classList.remove("hidden");
       }
     });
-    document.getElementById("hostCloseBtn").addEventListener("click", () => { SoundFX.playClick(); document.getElementById("hostPanel").classList.add("hidden"); });
+    document.getElementById("hostCloseBtn").addEventListener("click", () => { SoundFX.unlock(); SoundFX.playButtonPop(); document.getElementById("hostPanel").classList.add("hidden"); });
 
     // 動態套用全場總人數 (2~50)
     document.getElementById("applySlotCountBtn").addEventListener("click", async () => {
+      SoundFX.unlock();
       if (!isHostUnlocked) return;
-      SoundFX.playClick();
+      SoundFX.playButtonPop();
       const newCount = parseInt(document.getElementById("slotCountInput").value, 10);
       if (isNaN(newCount) || newCount < 2 || newCount > 50) {
         showToast("請輸入 2 到 50 之間的人數！");
@@ -2054,11 +2219,12 @@
       showToast(`已將總人數更新為 ${newCount} 人！`);
     });
 
-    // 切換 4 個階段（切到階段 2 若尚未指定輪值者，自動選編號最小的未抽獎者）
+    // 切換 4 個階段
     document.querySelectorAll(".phase-switch-btn").forEach(btn => {
       btn.addEventListener("click", async () => {
+        SoundFX.unlock();
         if (!isHostUnlocked) return;
-        SoundFX.playClick();
+        SoundFX.playButtonPop();
         const nextPhase = Number(btn.dataset.setPhase);
         await mutateRoom((data) => {
           data.phase = nextPhase;
@@ -2078,8 +2244,9 @@
 
     // 主辦人手動指定換誰抽
     document.getElementById("hostSetTurnBtn").addEventListener("click", async () => {
+      SoundFX.unlock();
       if (!isHostUnlocked) return;
-      SoundFX.playClick();
+      SoundFX.playButtonPop();
       const targetSlotId = document.getElementById("hostTurnSelect").value;
       if (!targetSlotId) { showToast("目前沒有可指定的未抽獎成員！"); return; }
       await mutateRoom((data) => {
@@ -2094,8 +2261,9 @@
 
     // 主辦人隨機指定下一位
     document.getElementById("hostRandomTurnBtn").addEventListener("click", async () => {
+      SoundFX.unlock();
       if (!isHostUnlocked) return;
-      SoundFX.playClick();
+      SoundFX.playButtonPop();
       let pickedId = "";
       const ok = await mutateRoom((data) => {
         const undrawn = getUndrawnActiveParticipants(data);
@@ -2113,16 +2281,19 @@
 
     // 正式開票揭曉
     document.getElementById("revealToggleBtn").addEventListener("click", async () => {
+      SoundFX.unlock();
       if (!isHostUnlocked) return;
-      SoundFX.playClick();
+      SoundFX.playButtonPop();
       await mutateRoom((data) => { data.phase = 4; data.revealed = true; });
     });
 
     // 重置測試資料
     document.getElementById("resetTestBtn").addEventListener("click", () => {
+      SoundFX.unlock();
       if (!isHostUnlocked) return;
-      SoundFX.playClick();
+      SoundFX.playButtonPop();
       showConfirm("確定要清空雲端所有測試資料，恢復成全新狀態嗎？", async () => {
+        SoundFX.unlock();
         tempCandidateSlotId = null;
         rejectedSlotId = null;
         currentRotation = 0;
