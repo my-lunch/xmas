@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>2026 久違了 聖誕交換禮物大會</title>
+  <!-- 防止 LINE 分享連結時自動抓取頁面隱藏的主辦人主控台文字 -->
+  <meta property="og:title" content="2026 久違了 聖誕交換禮物大會" />
+  <meta property="og:description" content=" " />
+  <meta name="description" content=" " />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -114,7 +118,7 @@
         <button id="hostCloseBtn" class="text-xs text-emerald-200 underline">收起</button>
       </div>
 
-      <!-- 動態調整人數 -->
+      <!-- 動態調整參加人數 -->
       <div class="flex items-center justify-between gap-2 bg-black/25 p-2.5 rounded-xl border border-white/15">
         <label for="slotCountInput" class="text-xs font-bold text-[#f7e7b4] shrink-0">總人數</label>
         <div class="flex items-center gap-2">
@@ -123,7 +127,7 @@
         </div>
       </div>
 
-      <!-- 階段切換按鈕 -->
+      <!-- 4 階段切換按鈕 -->
       <div class="grid grid-cols-2 gap-2">
         <button data-set-phase="1" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">1️⃣ 轉盤抽號與寫提示</button>
         <button data-set-phase="2" class="phase-switch-btn py-2.5 px-3 rounded-xl text-xs font-bold border border-white/20 text-left">2️⃣ 電子籤筒抽禮物</button>
@@ -171,7 +175,7 @@
       <div class="flex items-center justify-between gap-3">
         <div class="space-y-1">
           <p class="text-xs text-emerald-200/80">你送出的禮物編號</p>
-          <p class="text-xl font-black text-[#f7e7b4] flex items-baseline gap-2">
+          <p class="text-xl font-black text-[#f7e7b4] flex items-baseline gap-2.5">
             <span id="myOwnNumberText"><span class="text-[10px] opacity-75 font-bold mr-0.5">#</span>01</span>
             <span id="myOwnNameText" class="text-lg font-bold text-white"></span>
           </p>
@@ -185,7 +189,7 @@
       </div>
       <div id="myActionRow" class="pt-1">
         <button id="editMyHintBtn" class="w-full py-2.5 rounded-xl bg-[#d4af37] text-emerald-950 font-black text-sm btn-press shadow">填寫你的禮物提示</button>
-        <button id="editMyReceivedGiftBtn" class="hidden w-full py-3 rounded-xl bg-gradient-to-r from-[#f7e7b4] to-[#d4af37] text-emerald-950 font-black text-sm btn-press shadow">請填寫收到的禮物內容</button>
+        <button id="editMyReceivedGiftBtn" class="hidden w-full py-3 rounded-xl bg-gradient-to-r from-[#f7e7b4] to-[#d4af37] text-emerald-950 font-black text-sm btn-press shadow">🎁 請填寫收到的禮物內容</button>
       </div>
     </section>
 
@@ -208,8 +212,8 @@
           <span id="topRedrawStatusBadge" class="text-xs font-bold text-emerald-200/90">每人限重抽 1 次</span>
         </div>
 
-        <!-- 標題區（與下方籤筒保留充足間距，絕不重疊） -->
-        <div id="lotteryHeaderBlock" class="relative z-10 space-y-1.5 pt-2 pb-4">
+        <!-- 標題區（預留充足垂直間距，竹籤絕對不會重疊到文字） -->
+        <div id="lotteryHeaderBlock" class="relative z-10 space-y-1.5 pt-2 pb-6">
           <h2 id="lotteryMainHeading" class="text-2xl font-black text-[#f7e7b4] tracking-wide">搖出你的聖誕禮物</h2>
           <p id="lotterySubHeading" class="text-xs text-emerald-200/85">已自動排除你自己送的禮物</p>
         </div>
@@ -250,7 +254,7 @@
           <button id="drawTicketBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#f7e7b4] via-[#d4af37] to-[#b48a28] text-emerald-950 text-lg font-black shadow-xl btn-press tracking-wide">🎋 用力搖出一支籤！</button>
         </div>
 
-        <!-- 已抽定結果（乾淨俐落的實體卡片，無多餘半透明框或外框陰影） -->
+        <!-- 已抽定結果（乾淨俐落的實體白金卡片，無多餘半透明框） -->
         <div id="lotteryResultBox" class="hidden relative z-10 space-y-4 py-3">
           <p class="text-sm font-black text-[#f7e7b4]">🎉 抽籤完成！請領取你的聖誕禮物</p>
           <div class="mx-auto max-w-[220px] py-6 px-6 rounded-2xl bg-[#fcfaf5] border-2 border-[#d4af37] text-emerald-950">
@@ -305,7 +309,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-stone-600 mb-1.5">請填寫收到的禮物內容</label>
-          <input id="inputGiftName" type="text" placeholder="輸入收到的禮物名稱" class="w-full px-4 py-3.5 rounded-2xl border-2 border-stone-300 focus:border-emerald-800 focus:outline-none text-lg font-black bg-white" />
+          <input id="inputGiftName" type="text" placeholder="請填寫收到的禮物內容" class="w-full px-4 py-3.5 rounded-2xl border-2 border-stone-300 focus:border-emerald-800 focus:outline-none text-lg font-black bg-white" />
         </div>
         <p id="giftErrorMsg" class="hidden text-xs font-black text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2"></p>
       </div>
@@ -327,7 +331,7 @@
     </div>
   </div>
 
-  <!-- 自訂二次確認視窗 -->
+  <!-- 自訂二次確認視窗（取代瀏覽器原生 confirm） -->
   <div id="confirmModal" class="hidden fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4">
     <div class="card-ivory w-full max-w-xs rounded-3xl p-5 space-y-4 text-center border-2 border-[#d4af37]">
       <div class="text-2xl">⚠️</div>
@@ -341,17 +345,18 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 已內建你的 Firebase Firestore 設定 (xmas-2026-6f875)
+    // 已內建你的 Firebase 專案設定 (xmas-2026-6f875)
     const USER_FIREBASE_CONFIG = {
       apiKey: "AIzaSyD6kiQTS7cKqWY8AvfmshSouRtCR_AJXg8",
       authDomain: "xmas-2026-6f875.firebaseapp.com",
       projectId: "xmas-2026-6f875",
       storageBucket: "xmas-2026-6f875.firebasestorage.app",
       messagingSenderId: "693437619003",
-      appId: "1:693437619003:web:c3da29ad9b96915022751e"
+      appId: "1:693437619003:web:c3da29ad9b96915022751e",
+      measurementId: "G-BEXYFCK3CZ"
     };
 
     const ENTRY_PWD = "2026";
@@ -387,10 +392,10 @@
 
     // 全站縮小 # 符號，維持數字與文字清晰放大
     function fmtNum(id, hashSizeClass = "text-[10px]") {
-      return `<span class="${hashSizeClass} opacity-70 font-bold mr-0.5">#</span>${id}`;
+      return `<span class="${hashSizeClass} opacity-75 font-bold mr-0.5">#</span>${id}`;
     }
 
-    // 裝置識別碼
+    // 裝置專屬識別碼（防止同裝置重複領號或重複投票）
     let deviceId = "";
     try {
       deviceId = localStorage.getItem("xmas2026_device_id") || "";
@@ -411,6 +416,7 @@
       return slots;
     }
 
+    // 動態增減人數時，保留已被領取的號碼並補足或移除多餘空號
     function normalizeSlots(existingSlots, totalCount) {
       const result = { ...(existingSlots || {}) };
       for (let i = 1; i <= totalCount; i++) {
@@ -430,7 +436,7 @@
 
     let state = { totalSlots: 20, phase: 1, revealed: false, slots: createInitialSlots(20), users: {} };
     let db = null, roomRef = null, currentUser = null, useLocalFallback = false, isHostUnlocked = false;
-    let currentEditSlotId = null, tempCandidateSlotId = null;
+    let currentEditSlotId = null, tempCandidateSlotId = null, lastThrownSlotId = null;
     let isSpinning = false, isShakingTube = false, currentRotation = 0;
 
     // ==================== 1. 入場門禁 ====================
@@ -464,47 +470,34 @@
     // ==================== 2. Firebase 雲端即時同步 ====================
     async function initDatabase() {
       try {
-        const configToUse = (typeof __firebase_config !== 'undefined' && __firebase_config)
-          ? JSON.parse(__firebase_config)
-          : (USER_FIREBASE_CONFIG.apiKey ? USER_FIREBASE_CONFIG : null);
+        const app = initializeApp(USER_FIREBASE_CONFIG);
+        const auth = getAuth(app);
+        db = getFirestore(app);
 
-        if (configToUse) {
-          const app = initializeApp(configToUse);
-          const auth = getAuth(app);
-          db = getFirestore(app);
-          const appId = typeof __app_id !== 'undefined' ? __app_id : 'xmas-2026-live';
+        const cred = await signInAnonymously(auth);
+        currentUser = cred.user;
+        if (!currentUser) { enableLocalMode(); return; }
 
-          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            const cred = await signInWithCustomToken(auth, __initial_auth_token);
-            currentUser = cred.user;
+        roomRef = doc(db, 'artifacts', 'xmas-2026-live', 'public', 'data', 'xmas_2026_event', 'room_main');
+
+        onSnapshot(roomRef, (snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            state.totalSlots = data.totalSlots || 20;
+            state.phase = data.phase || 1;
+            state.revealed = !!data.revealed;
+            state.slots = normalizeSlots(data.slots, state.totalSlots);
+            state.users = data.users || {};
+            if (!isSpinning && !isShakingTube) renderAll();
           } else {
-            const cred = await signInAnonymously(auth);
-            currentUser = cred.user;
+            setDoc(roomRef, state);
           }
-
-          if (!currentUser) { enableLocalMode(); return; }
-          roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'xmas_2026_event', 'room_main');
-
-          onSnapshot(roomRef, (snap) => {
-            if (snap.exists()) {
-              const data = snap.data();
-              state.totalSlots = data.totalSlots || 20;
-              state.phase = data.phase || 1;
-              state.revealed = !!data.revealed;
-              state.slots = normalizeSlots(data.slots, state.totalSlots);
-              state.users = data.users || {};
-              if (!isSpinning && !isShakingTube) renderAll();
-            } else {
-              setDoc(roomRef, state);
-            }
-          }, (err) => {
-            console.warn("Firestore listener error, fallback to local:", err);
-            enableLocalMode();
-          });
-        } else {
+        }, (err) => {
+          console.warn("Firestore 監聽切換至本機模式:", err);
           enableLocalMode();
-        }
+        });
       } catch (e) {
+        console.warn("Firebase 初始化切換至本機模式:", e);
         enableLocalMode();
       }
     }
@@ -520,6 +513,7 @@
       renderAll();
     }
 
+    // 使用 Firestore Transaction 確保多人同時操作絕不撞號或覆蓋
     async function mutateRoom(updaterFn) {
       if (useLocalFallback) {
         const res = updaterFn(state);
@@ -558,10 +552,11 @@
       const countInput = document.getElementById("slotCountInput");
       if (document.activeElement !== countInput) countInput.value = state.totalSlots;
 
+      // 頂部個人徽章（無括號）
       const userBadge = document.getElementById("myUserBadge");
       if (me) {
         userBadge.classList.remove("hidden");
-        userBadge.innerHTML = `${fmtNum(me.ownSlotId, "text-[9px]")} ${escapeHtml(me.name)}`;
+        userBadge.innerHTML = `${fmtNum(me.ownSlotId, "text-[9px]")} · ${escapeHtml(me.name)}`;
       } else {
         userBadge.classList.add("hidden");
       }
@@ -594,6 +589,7 @@
         btn.classList.toggle("text-white", p !== state.phase);
       });
 
+      // 個人報到轉盤 vs 個人狀態卡
       const wheelCard = document.getElementById("wheelRegisterCard");
       const myStatusCard = document.getElementById("myStatusCard");
       if (!me) {
@@ -633,7 +629,7 @@
           const wonSlot = state.slots[me.wonSlotId];
           editReceivedBtn.textContent = wonSlot && wonSlot.gift
             ? `修改收到的禮物內容 ${me.wonSlotId} 號`
-            : `請填寫收到的禮物內容`;
+            : `🎁 請填寫收到的禮物內容`;
         }
       }
 
@@ -661,7 +657,7 @@
       }
     }
 
-    // 繪製轉盤（# 號縮小，數字放大清晰）
+    // 繪製幸運轉盤（縮小 # 號，數字清晰放大）
     function drawWheelCanvas(availableSlots) {
       const canvas = document.getElementById("wheelCanvas");
       const ctx = canvas.getContext("2d");
@@ -711,6 +707,7 @@
       const available = slotArr.filter(s => !s.giverId);
       drawWheelCanvas(available);
       document.getElementById("wheelPoolText").textContent = available.length > 0 ? `目前還有 ${available.length} 個號碼可抽` : "所有號碼已全數分配完畢";
+      // 僅顯示已抽出的號碼徽章，隱藏送禮人姓名
       document.getElementById("assignedChips").innerHTML = slotArr.filter(s => s.giverId).map(s =>
         `<span class="px-2 py-0.5 rounded-md bg-emerald-950/10 text-emerald-950 text-xs font-bold">${fmtNum(s.id, "text-[9px]")}</span>`
       ).join("");
@@ -774,7 +771,7 @@
       }).join("");
     }
 
-    // 階段 2：抽籤池自動排除已抽走與本人送出的禮物
+    // 階段 2：有效籤池（自動排除已抽走、本人送出的號碼、未領取的空號）
     function getValidLotteryPool(slotArr, me) {
       const activeUndrawn = slotArr.filter(s => s.giverId && !s.drawnBy);
       if (!me) return activeUndrawn;
@@ -796,8 +793,8 @@
       const resultBox = document.getElementById("lotteryResultBox");
       const drawBtn = document.getElementById("drawTicketBtn");
 
-      // 只要還沒用過重抽機會，就一定顯示重抽按鈕
-      const canRedraw = !(me && me.redrawUsed);
+      const validPool = getValidLotteryPool(slotArr, me);
+      const canRedraw = !(me && me.redrawUsed) && validPool.length > 1;
       document.getElementById("topRedrawStatusBadge").textContent = (me && me.redrawUsed) ? "重抽機會已使用" : "每人限重抽 1 次";
 
       if (me && me.wonSlotId && state.slots[me.wonSlotId]) {
@@ -852,7 +849,7 @@
                     ${slot.drawnByName ? `<span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800">得主：${escapeHtml(slot.drawnByName)}</span>` : ''}
                   </div>
                   <div class="rounded-2xl ${hasGift ? 'bg-amber-50/95 border border-amber-200/90 px-3.5 py-2.5' : 'py-1'}">
-                    <h3 class="text-2xl sm:text-3xl font-black text-stone-900 leading-snug break-words tracking-tight">
+                    <h3 class="text-xl sm:text-2xl font-black text-stone-900 leading-snug break-words tracking-tight">
                       ${hasGift ? escapeHtml(slot.gift) : `<span class="text-stone-400 font-bold text-base">${isMyWonGift ? '請填寫收到的禮物內容' : '尚未登錄禮物'}</span>`}
                     </h3>
                   </div>
@@ -863,7 +860,7 @@
             ${state.phase === 4 ? `
               <div class="pt-2.5 border-t border-stone-200 flex items-center justify-between gap-2">
                 <span class="text-xs font-bold text-stone-500">
-                  ${state.revealed ? `獲得 ${slot.votes || 0} 票` : (isMyOwnGift ? '你自己送的禮物・不可投票' : (isVotedByMe ? '✅ 你已投給這份禮物' : '不記名投票・票數保密中'))}
+                  ${state.revealed ? `獲得 ${slot.votes || 0} 票` : (isMyOwnGift ? '你自己送的禮物' : (isVotedByMe ? '✅ 你已投給這份禮物' : '不記名投票・票數保密中'))}
                 </span>
                 ${!state.revealed && !isMyOwnGift ? `
                   <button onclick="window.castVote('${slot.id}')" ${myVotedSlotId ? 'disabled' : ''} class="px-4 py-2 rounded-xl text-xs font-black btn-press ${isVotedByMe ? 'bg-red-700 text-white' : myVotedSlotId ? 'bg-stone-200 text-stone-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#b91c1c] to-[#991b1b] text-white shadow'}">
@@ -924,7 +921,7 @@
         const hintVal = document.getElementById("inputHint").value.trim();
         if (hintVal.length < 6) {
           const errEl = document.getElementById("hintErrorMsg");
-          errEl.textContent = `你的文字太少了！請至少輸入 6 個字才能儲存（目前 ${hintVal.length} 字）`;
+          errEl.textContent = `文字太少囉！請至少輸入 6 個字才能儲存（目前 ${hintVal.length} 字）`;
           errEl.classList.remove("hidden");
           document.getElementById("inputHint").focus();
           return;
@@ -955,15 +952,20 @@
       if (me.wonSlotId) { showToast("你已經抽過禮物囉，每人限抽一次！"); return; }
 
       const allUndrawn = Object.values(state.slots).filter(s => s.giverId && !s.drawnBy);
-      const pool = getValidLotteryPool(Object.values(state.slots), me);
+      let pool = getValidLotteryPool(Object.values(state.slots), me);
 
       if (pool.length === 0) {
         if (allUndrawn.length === 1 && allUndrawn[0].id === me.ownSlotId) {
-          showToast("目前全場只有你 1 人的禮物，請等其他同事加入（或用無痕視窗測試）才能避開自己喔！");
+          showToast("目前全場只有你 1 人的禮物，請等其他同事加入才能避開自己喔！");
         } else {
           showToast("目前沒有可抽的籤囉！");
         }
         return;
+      }
+
+      // 重抽時優先避開剛剛丟回的那一支籤
+      if (lastThrownSlotId && pool.length > 1) {
+        pool = pool.filter(s => s.id !== lastThrownSlotId);
       }
 
       isShakingTube = true;
@@ -980,10 +982,11 @@
       }, 1200);
     });
 
-    // 丟回重抽：收回籤卡、保留下方籤筒並輕晃動畫
+    // 丟回重抽：收回籤卡、保留下方籤筒並搖晃提示再抽一次
     document.getElementById("redrawBtn").addEventListener("click", async () => {
       const me = state.users[deviceId];
       if (!me || me.redrawUsed || isShakingTube) return;
+      lastThrownSlotId = tempCandidateSlotId;
       await mutateRoom((data) => { if (data.users[deviceId]) data.users[deviceId].redrawUsed = true; });
       tempCandidateSlotId = null;
       renderAll();
@@ -992,7 +995,7 @@
       setTimeout(() => tube.classList.remove("shaking-tube"), 650);
     });
 
-    // 確定收下這支籤
+    // 確定收下這支籤（雲端交易鎖定）
     document.getElementById("confirmTicketBtn").addEventListener("click", async () => {
       if (!tempCandidateSlotId) return;
       const targetId = tempCandidateSlotId;
@@ -1010,13 +1013,14 @@
       });
       if (ok) {
         tempCandidateSlotId = null;
+        lastThrownSlotId = null;
         if (typeof confetti === "function") confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
       } else {
         renderAll();
       }
     });
 
-    // 階段 4 投票
+    // 階段 4：嚴格一人一票保密投票
     window.castVote = function(slotId) {
       const me = state.users[deviceId];
       if (!me) { showToast("請先輸入姓名並轉出號碼後才能投票！"); return; }
@@ -1093,7 +1097,7 @@
     document.getElementById("resetTestBtn").addEventListener("click", () => {
       if (!isHostUnlocked) return;
       showConfirm("確定要清空雲端所有測試資料，恢復成全新狀態嗎？", async () => {
-        tempCandidateSlotId = null; currentRotation = 0;
+        tempCandidateSlotId = null; lastThrownSlotId = null; currentRotation = 0;
         const canvas = document.getElementById("wheelCanvas");
         if (canvas) canvas.style.transform = "rotate(0deg)";
         await mutateRoom((data) => {
