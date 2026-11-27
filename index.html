@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>2026 久違了，聖誕交換禮物大會</title>
+  <!-- 載入 Tailwind CSS 與彩帶特效套件 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* 全域手機觸控與防水平溢位設定 */
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #123829 0%, #091f16 100%);
+      color: #f8f6f0;
+      min-height: 100vh;
+    }
+    /* 高對比象牙白卡片質感 */
+    .card-ivory {
+      background: #fcfaf5;
+      color: #1c2822;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
+    }
+    /* 按鈕點擊微縮回饋 */
+    .btn-press:active { transform: scale(0.97); }
+    /* 電子籤筒搖晃動畫 */
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      20% { transform: rotate(-7deg); }
+      40% { transform: rotate(7deg); }
+      60% { transform: rotate(-5deg); }
+      80% { transform: rotate(5deg); }
+    }
+    .animate-shake { animation: shake 0.45s ease-in-out; }
+    /* 皇冠微浮動動畫 */
+    @keyframes floatCrown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .animate-crown { animation: floatCrown 2.2s ease-in-out infinite; }
+  </style>
+</head>
+<body class="pb-20 selection:bg-[#d4af37] selection:text-[#091f16]">
+
+  <!-- ==================== 1. 頂部固定導覽列（含隱藏迷你小聖誕樹主控按鈕） ==================== -->
+  <header class="sticky top-0 z-30 backdrop-blur-md bg-[#0b261b]/92 border-b border-[#d4af37]/35 px-4 py-3.5 shadow-lg">
+    <div class="max-w-lg mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center gap-1.5 min-w-0">
+        <h1 class="text-[17px] sm:text-xl font-black tracking-wide text-[#f7e7b4] truncate">
+          2026 久違了，聖誕交換禮物大會
+        </h1>
+        <!-- 隱藏式主辦人主控開關（密碼：1234） -->
+        <button id="hostTriggerBtn" type="button" aria-label="主控台開關"
+          class="text-base opacity-80 hover:opacity-100 active:scale-125 transition p-1.5 rounded-lg select-none cursor-pointer">
+          🌲
+        </button>
+      </div>
+      <button id="qrOpenBtn" type="button"
+        class="shrink-0 text-xs font-black px-3.5 py-2 rounded-xl bg-[#d4af37] text-[#091f16] shadow btn-press cursor-pointer">
+        現場 QR
+      </button>
+    </div>
+
+    <!-- 目前階段進度導引條 -->
+    <div class="max-w-lg mx-auto mt-2.5 flex items-center justify-between text-xs bg-black/35 rounded-xl px-3.5 py-2 border border-[#d4af37]/25">
+      <span id="phaseBadge" class="font-black text-[#f7e7b4]">階段 1/4｜秘密寫提示投籤</span>
+      <span id="statusCounter" class="text-emerald-200 font-bold">已投籤 0 / 20</span>
+    </div>
+  </header>
+
+  <!-- ==================== 2. 隱藏式主辦人主控台（點擊 🌲 輸入 1234 才展開） ==================== -->
+  <section id="hostPanel" class="hidden max-w-lg mx-auto px-4 pt-3.5">
+    <div class="rounded-3xl bg-[#143b2b] border-2 border-[#d4af37] p-4 shadow-2xl space-y-3.5">
+      <div class="flex items-center justify-between border-b border-white/15 pb-2.5">
+        <span class="text-sm font-black text-[#f7e7b4]">👑 主辦人主控台（已解鎖）</span>
+        <button id="hostCloseBtn" type="button" class="text-xs font-bold text-emerald-200 px-2.5 py-1 rounded-lg bg-white/10 cursor-pointer">
+          收起面板
+        </button>
+      </div>
+
+      <!-- 四階段一鍵切換網格 -->
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" data-set-phase="1" class="phase-switch-btn py-3 px-2.5 rounded-2xl text-xs font-black border border-white/20 text-left transition cursor-pointer">
+          1️⃣ 秘密寫提示投籤
+        </button>
+        <button type="button" data-set-phase="2" class="phase-switch-btn py-3 px-2.5 rounded-2xl text-xs font-black border border-white/20 text-left transition cursor-pointer">
+          2️⃣ 電子籤筒抽禮物
+        </button>
+        <button type="button" data-set-phase="3" class="phase-switch-btn py-3 px-2.5 rounded-2xl text-xs font-black border border-white/20 text-left transition cursor-pointer">
+          3️⃣ 大開箱登記禮物
+        </button>
+        <button type="button" data-set-phase="4" class="phase-switch-btn py-3 px-2.5 rounded-2xl text-xs font-black border border-white/20 text-left transition cursor-pointer">
+          4️⃣ 不記名投最爛禮物
+        </button>
+      </div>
+
+      <!-- 開票揭曉與清空重置 -->
+      <div class="pt-1 border-t border-white/15 flex items-center justify-between gap-2">
+        <button id="revealToggleBtn" type="button"
+          class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-[#b91c1c] to-[#991b1b] text-white text-xs font-black border border-[#f7e7b4]/50 shadow-lg btn-press cursor-pointer">
+          🏆 正式開票揭曉大苦主
+        </button>
+        <button id="resetAllBtn" type="button"
+          class="py-3 px-3.5 rounded-2xl bg-black/45 text-red-300 border border-red-400/35 text-xs font-bold btn-press cursor-pointer">
+          清空重置
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 3. 主內容互動區 ==================== -->
+  <main class="max-w-lg mx-auto px-4 pt-4 space-y-4">
+
+    <!-- 【階段 2 專屬】電子籤筒抽禮物視窗（隱藏卡片列表，僅顯示抽籤互動） -->
+    <section id="lotterySection" class="hidden space-y-4">
+      <div class="card-ivory rounded-3xl p-6 border-2 border-[#d4af37] text-center space-y-4">
+        <div class="inline-block px-3.5 py-1 rounded-full bg-emerald-900/10 text-emerald-950 text-xs font-black">
+          每人限重抽 1 次・只顯示提示詞、隱藏號碼
+        </div>
+
+        <!-- 狀態 A：等待搖籤 -->
+        <div id="lotteryIdleBox" class="space-y-4 py-3">
+          <div class="text-6xl select-none" id="shakerIcon">🎋</div>
+          <div>
+            <h2 class="text-xl font-black text-emerald-950">輪到你抽籤囉！</h2>
+            <p class="text-sm text-stone-600 mt-1">按下按鈕抽出一句神祕提示，決定要不要收下！</p>
+          </div>
+          <button id="drawTicketBtn" type="button"
+            class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#14532d] to-[#0b331b] text-[#f7e7b4] text-lg font-black border border-[#d4af37] shadow-xl btn-press cursor-pointer">
+            🎋 搖一搖抽一支籤
+          </button>
+        </div>
+
+        <!-- 狀態 B：已抽到提示詞，決定保留或丟回重抽 -->
+        <div id="lotteryDecisionBox" class="hidden space-y-4 py-2">
+          <p class="text-xs font-black tracking-wider text-amber-800">你抽到的神祕提示詞是</p>
+          <div class="p-5 rounded-2xl bg-amber-50 border-2 border-dashed border-amber-500">
+            <p id="drawnHintText" class="text-2xl font-black text-stone-900 leading-snug">「深夜會用到」</p>
+          </div>
+          <p id="redrawChanceLabel" class="text-xs font-bold text-stone-600">你還有 1 次丟回重抽的機會</p>
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <button id="redrawBtn" type="button"
+              class="py-3.5 px-3 rounded-2xl bg-stone-200 hover:bg-stone-300 text-stone-800 font-black text-sm btn-press cursor-pointer">
+              🔄 不喜歡，丟回重抽
+            </button>
+            <button id="confirmTicketBtn" type="button"
+              class="py-3.5 px-3 rounded-2xl bg-[#b91c1c] hover:bg-red-700 text-white font-black text-sm shadow-lg btn-press cursor-pointer">
+              ✨ 就決定是它了！
+            </button>
+          </div>
+        </div>
+
+        <!-- 狀態 C：確定收下後才揭曉禮物編號與提示詞 -->
+        <div id="lotteryResultBox" class="hidden space-y-3.5 py-2">
+          <p class="text-sm font-black text-emerald-900">🎉 抽籤確定！請領取對應號碼的禮物</p>
+          <div class="py-4 px-8 rounded-2xl bg-emerald-950 text-[#f7e7b4] border-2 border-[#d4af37] inline-block shadow-lg">
+            <span class="text-xs block opacity-85 font-bold">你的禮物編號</span>
+            <span id="finalWonNumber" class="text-4xl font-black tracking-wider">#07</span>
+          </div>
+          <p id="finalWonHint" class="text-sm font-black text-stone-700"></p>
+          <div class="pt-2">
+            <button id="nextPersonDrawBtn" type="button"
+              class="w-full py-3.5 rounded-2xl bg-emerald-900 hover:bg-emerald-800 text-[#f7e7b4] font-black text-sm shadow-md btn-press cursor-pointer">
+              ➡️ 換下一位同事抽籤
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 籤筒剩餘數量顯示 -->
+      <div class="rounded-2xl bg-black/30 border border-[#d4af37]/25 p-3.5 text-center">
+        <p id="poolRemainText" class="text-xs text-[#f7e7b4] font-bold">籤筒裡目前還有 20 支未抽出的籤</p>
+      </div>
+    </section>
+
+    <!-- 【正式開票結果紅金大看板】標題嚴格置中分成兩行 -->
+    <section id="resultBanner" class="hidden rounded-3xl bg-gradient-to-b from-[#8b1818] to-[#4a0909] border-2 border-[#f7e7b4] p-6 text-center shadow-2xl space-y-3.5">
+      <div class="text-4xl animate-crown">👑🧋</div>
+      <h2 class="text-2xl sm:text-3xl font-black text-[#f7e7b4] leading-snug tracking-tight">
+        <span class="block">本屆最爛禮物大苦主</span>
+        <span class="block text-xl sm:text-2xl text-red-100 mt-1">（請全場喝飲料）</span>
+      </h2>
+      <div id="loserList" class="space-y-2.5 pt-1"></div>
+    </section>
+
+    <!-- 【階段 1、3、4】#01 ~ #20 象牙白高對比大卡片清單 -->
+    <section id="cardsGrid" class="space-y-3"></section>
+
+  </main>
+
+  <!-- ==================== 4. 填寫 / 編輯彈窗 ==================== -->
+  <div id="editModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+    <div class="card-ivory w-full max-w-md rounded-3xl p-5 space-y-4 border-2 border-[#d4af37]">
+      <div class="flex items-center justify-between border-b border-stone-200 pb-3">
+        <h3 id="modalTitle" class="text-xl font-black text-emerald-950">#01 號禮物登記</h3>
+        <button id="modalCloseBtn" type="button" class="w-9 h-9 rounded-full bg-stone-200 text-stone-700 font-black cursor-pointer">✕</button>
+      </div>
+
+      <!-- 階段 1 欄位：秘密寫提示投籤 -->
+      <div id="modalPhase1Fields" class="space-y-3.5">
+        <div>
+          <label for="inputGiver" class="block text-xs font-black text-stone-700 mb-1">
+            1. 誰送的？（抽籤時自動隱藏保密）
+          </label>
+          <input id="inputGiver" type="text" placeholder="請輸入你的名字或綽號"
+            class="w-full px-4 py-3 rounded-xl border-2 border-stone-300 focus:border-emerald-800 focus:outline-none text-base font-bold bg-white" />
+        </div>
+        <div>
+          <label for="inputHint" class="block text-xs font-black text-stone-700 mb-1">
+            2. 給抽籤者的一句話提示（限 12 字內）
+          </label>
+          <input id="inputHint" type="text" maxlength="12" placeholder="例：深夜會用到、絕對不雷"
+            class="w-full px-4 py-3 rounded-xl border-2 border-stone-300 focus:border-emerald-800 focus:outline-none text-base font-bold bg-white" />
+        </div>
+      </div>
+
+      <!-- 階段 3 欄位：大開箱登記禮物 -->
+      <div id="modalPhase3Fields" class="hidden space-y-3.5">
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 font-bold">
+          提示詞：<span id="modalHintPreview"></span>
+        </div>
+        <div>
+          <label for="inputGiverEdit" class="block text-xs font-black text-stone-700 mb-1">送禮人</label>
+          <input id="inputGiverEdit" type="text" placeholder="輸入送禮人名字"
+            class="w-full px-4 py-3 rounded-xl border-2 border-stone-300 focus:border-emerald-800 focus:outline-none text-base font-bold bg-white" />
+        </div>
+        <div>
+          <label for="inputGiftName" class="block text-xs font-black text-stone-700 mb-1">拆開的禮物內容</label>
+          <input id="inputGiftName" type="text" placeholder="例：任天堂 Alarmo 鬧鐘"
+            class="w-full px-4 py-3 rounded-xl border-2 border-stone-300 focus:border-emerald-800 focus:outline-none text-base font-bold bg-white" />
+        </div>
+      </div>
+
+      <button id="modalSaveBtn" type="button"
+        class="w-full py-3.5 rounded-2xl bg-[#14532d] text-[#f7e7b4] font-black text-base shadow-lg btn-press cursor-pointer">
+        儲存並更新
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== 5. 隱藏聖誕樹密碼驗證視窗（密碼：1234） ==================== -->
+  <div id="pwdModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+    <div class="card-ivory w-full max-w-xs rounded-3xl p-5 space-y-4 text-center border-2 border-[#d4af37]">
+      <div class="text-3xl">🌲</div>
+      <h3 class="text-lg font-black text-emerald-950">輸入主辦人密碼</h3>
+      <input id="pwdInput" type="password" inputmode="numeric" maxlength="6" placeholder="請輸入密碼"
+        class="w-full text-center tracking-widest text-xl font-black px-4 py-3 rounded-xl border-2 border-stone-300 focus:border-emerald-800 focus:outline-none bg-white" />
+      <div class="grid grid-cols-2 gap-2">
+        <button id="pwdCancelBtn" type="button" class="py-2.5 rounded-xl bg-stone-200 text-stone-700 font-bold text-sm cursor-pointer">取消</button>
+        <button id="pwdConfirmBtn" type="button" class="py-2.5 rounded-xl bg-[#14532d] text-[#f7e7b4] font-black text-sm cursor-pointer">解鎖</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 6. 現場 QR Code 與複製網址彈窗 ==================== -->
+  <div id="qrModal" class="hidden fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4">
+    <div class="card-ivory w-full max-w-xs rounded-3xl p-5 text-center space-y-4 border-2 border-[#d4af37]">
+      <h3 class="text-lg font-black text-emerald-950">掃碼加入交換禮物</h3>
+      <div class="bg-white p-3.5 rounded-2xl inline-block border border-stone-200 shadow-inner">
+        <div id="qrCodeBox" class="flex items-center justify-center"></div>
+      </div>
+      <button id="copyUrlBtn" type="button"
+        class="w-full py-3 rounded-xl bg-[#14532d] text-[#f7e7b4] font-black text-sm btn-press cursor-pointer">
+        一鍵複製網址貼群組
+      </button>
+      <button id="qrCloseBtn" type="button" class="w-full py-1.5 text-xs text-stone-500 font-bold cursor-pointer">關閉</button>
+    </div>
+  </div>
+
+  <!-- ==================== 7. 自訂二次確認視窗與輕量通知（無 alert/confirm） ==================== -->
+  <div id="confirmDialogModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+    <div class="card-ivory w-full max-w-xs rounded-3xl p-5 text-center space-y-4 border-2 border-[#d4af37]">
+      <h3 id="confirmDialogTitle" class="text-lg font-black text-emerald-950">確認操作</h3>
+      <p id="confirmDialogMsg" class="text-sm text-stone-600 leading-relaxed"></p>
+      <div class="grid grid-cols-2 gap-2">
+        <button id="confirmDialogCancel" type="button" class="py-2.5 rounded-xl bg-stone-200 text-stone-700 font-bold text-sm cursor-pointer">取消</button>
+        <button id="confirmDialogOk" type="button" class="py-2.5 rounded-xl bg-[#b91c1c] text-white font-black text-sm cursor-pointer">確定</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastBanner" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+    <div id="toastText" class="px-4 py-2.5 rounded-full bg-emerald-950 text-[#f7e7b4] border border-[#d4af37] text-xs font-black shadow-2xl whitespace-nowrap"></div>
+  </div>
+
+  <!-- ==================== 8. 核心互動與即時狀態邏輯 ==================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const TOTAL_SLOTS = 20;
+    const HOST_PWD = "1234";
+
+    // 產生預設 #01 ~ #20 號資料結構
+    function createInitialSlots() {
+      const slots = {};
+      for (let i = 1; i <= TOTAL_SLOTS; i++) {
+        const key = String(i).padStart(2, '0');
+        slots[key] = {
+          id: key,
+          giver: "",
+          hint: "",
+          gift: "",
+          drawn: false,
+          votes: 0
+        };
+      }
+      return slots;
+    }
+
+    // 全場共用狀態
+    let state = {
+      phase: 1, // 1: 秘密寫提示投籤, 2: 電子籤筒抽禮物, 3: 大開箱登記禮物, 4: 不記名投最爛禮物
+      revealed: false,
+      slots: createInitialSlots()
+    };
+
+    // 本機暫存狀態（不依賴 localStorage，支援無痕與 iFrame 預覽）
+    let currentEditId = null;
+    let tempCandidateSlotId = null;
+    let currentTurnRedrawUsed = false;
+    let currentTurnWonId = null;
+    let hasVotedThisSession = false;
+    let myVotedSlotId = null;
+
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let roomDocRef = null;
+    let voteRecordDocRef = null;
+    let useMemoryMode = false;
+
+    // 顯示底部輕量提示
+    let toastTimer = null;
+    function showToast(msg) {
+      const banner = document.getElementById("toastBanner");
+      document.getElementById("toastText").textContent = msg;
+      banner.classList.remove("opacity-0");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => banner.classList.add("opacity-0"), 2400);
+    }
+
+    // 自訂二次確認視窗（取代瀏覽器 confirm）
+    function askConfirm(title, message, onConfirm) {
+      const modal = document.getElementById("confirmDialogModal");
+      document.getElementById("confirmDialogTitle").textContent = title;
+      document.getElementById("confirmDialogMsg").textContent = message;
+      modal.classList.remove("hidden");
+
+      const okBtn = document.getElementById("confirmDialogOk");
+      const cancelBtn = document.getElementById("confirmDialogCancel");
+
+      const cleanup = () => modal.classList.add("hidden");
+      cancelBtn.onclick = cleanup;
+      okBtn.onclick = () => {
+        cleanup();
+        onConfirm();
+      };
+    }
+
+    // 初始化儲存與即時同步（嚴格遵守認證優先與標準集合路徑）
+    async function initApp() {
+      try {
+        if (typeof __firebase_config !== "undefined" && __firebase_config) {
+          const firebaseConfig = JSON.parse(__firebase_config);
+          const appId = typeof __app_id !== "undefined" ? __app_id : "xmas-gift-2026";
+          const app = initializeApp(firebaseConfig);
+          auth = getAuth(app);
+          db = getFirestore(app);
+
+          if (typeof __initial_auth_token !== "undefined" && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+
+          currentUser = auth.currentUser;
+          if (!currentUser) {
+            enableMemoryMode();
+            return;
+          }
+
+          roomDocRef = doc(db, "artifacts", appId, "public", "data", "xmas_2026_rooms", "main");
+          voteRecordDocRef = doc(db, "artifacts", appId, "public", "data", "xmas_2026_votes", currentUser.uid);
+
+          // 讀取個人是否已投票
+          const voteSnap = await getDoc(voteRecordDocRef);
+          if (voteSnap.exists() && voteSnap.data().votedSlotId) {
+            hasVotedThisSession = true;
+            myVotedSlotId = voteSnap.data().votedSlotId;
+          }
+
+          // 即時監聽全場狀態
+          onSnapshot(roomDocRef, (snap) => {
+            if (snap.exists()) {
+              const data = snap.data();
+              state.phase = data.phase || 1;
+              state.revealed = !!data.revealed;
+              state.slots = { ...createInitialSlots(), ...(data.slots || {}) };
+              renderAll();
+            } else {
+              setDoc(roomDocRef, state);
+            }
+          }, () => enableMemoryMode());
+        } else {
+          enableMemoryMode();
+        }
+      } catch (err) {
+        enableMemoryMode();
+      }
+    }
+
+    function enableMemoryMode() {
+      useMemoryMode = true;
+      renderAll();
+    }
+
+    async function persistState() {
+      renderAll();
+      if (!useMemoryMode && roomDocRef && currentUser) {
+        try {
+          await setDoc(roomDocRef, state, { merge: true });
+        } catch (e) {
+          showToast("雲端同步發生延遲，請稍候");
+        }
+      }
+    }
+
+    // 渲染全部介面
+    function renderAll() {
+      const phaseLabels = {
+        1: "階段 1/4｜秘密寫提示投籤",
+        2: "階段 2/4｜電子籤筒抽禮物",
+        3: "階段 3/4｜大開箱登記禮物",
+        4: "階段 4/4｜不記名投最爛禮物"
+      };
+      document.getElementById("phaseBadge").textContent = phaseLabels[state.phase];
+
+      const slotArr = Object.values(state.slots).sort((a, b) => a.id.localeCompare(b.id));
+      if (state.phase === 1) {
+        const done = slotArr.filter(s => s.giver && s.hint).length;
+        document.getElementById("statusCounter").textContent = `已投籤 ${done} / ${TOTAL_SLOTS}`;
+      } else if (state.phase === 2) {
+        const drawnCount = slotArr.filter(s => s.drawn).length;
+        document.getElementById("statusCounter").textContent = `已抽出 ${drawnCount} / ${TOTAL_SLOTS}`;
+      } else if (state.phase === 3) {
+        const opened = slotArr.filter(s => s.gift).length;
+        document.getElementById("statusCounter").textContent = `已開箱 ${opened} / ${TOTAL_SLOTS}`;
+      } else {
+        const totalVotes = slotArr.reduce((acc, s) => acc + (s.votes || 0), 0);
+        document.getElementById("statusCounter").textContent = `已投票 ${totalVotes} 票`;
+      }
+
+      // 主控台當前階段按鈕高亮
+      document.querySelectorAll(".phase-switch-btn").forEach(btn => {
+        const p = Number(btn.dataset.setPhase);
+        if (p === state.phase) {
+          btn.classList.add("bg-[#d4af37]", "text-[#091f16]", "border-[#d4af37]");
+          btn.classList.remove("text-white");
+        } else {
+          btn.classList.remove("bg-[#d4af37]", "text-[#091f16]", "border-[#d4af37]");
+          btn.classList.add("text-white");
+        }
+      });
+
+      const lotterySection = document.getElementById("lotterySection");
+      const cardsGrid = document.getElementById("cardsGrid");
+      const resultBanner = document.getElementById("resultBanner");
+
+      // 階段 2 隱藏卡片列表，顯示電子籤筒
+      if (state.phase === 2) {
+        lotterySection.classList.remove("hidden");
+        cardsGrid.classList.add("hidden");
+        renderLotteryView(slotArr);
+      } else {
+        lotterySection.classList.add("hidden");
+        cardsGrid.classList.remove("hidden");
+        renderCardsGrid(slotArr);
+      }
+
+      // 正式開票揭曉大看板
+      if (state.revealed) {
+        resultBanner.classList.remove("hidden");
+        renderLoserBanner(slotArr);
+      } else {
+        resultBanner.classList.add("hidden");
+      }
+    }
+
+    // 渲染階段 2 電子籤筒畫面
+    function renderLotteryView(slotArr) {
+      const remaining = slotArr.filter(s => !s.drawn);
+      document.getElementById("poolRemainText").textContent = `籤筒裡目前還有 ${remaining.length} 支未抽出的籤`;
+
+      const idleBox = document.getElementById("lotteryIdleBox");
+      const decisionBox = document.getElementById("lotteryDecisionBox");
+      const resultBox = document.getElementById("lotteryResultBox");
+
+      if (currentTurnWonId && state.slots[currentTurnWonId]) {
+        idleBox.classList.add("hidden");
+        decisionBox.classList.add("hidden");
+        resultBox.classList.remove("hidden");
+        document.getElementById("finalWonNumber").textContent = `#${currentTurnWonId}`;
+        document.getElementById("finalWonHint").textContent = `提示詞：「${state.slots[currentTurnWonId].hint || '神祕禮物'}」`;
+      } else if (tempCandidateSlotId && state.slots[tempCandidateSlotId]) {
+        idleBox.classList.add("hidden");
+        decisionBox.classList.remove("hidden");
+        resultBox.classList.add("hidden");
+        document.getElementById("drawnHintText").textContent = `「${state.slots[tempCandidateSlotId].hint || '沒有寫提示的神祕禮物'}」`;
+
+        const redrawBtn = document.getElementById("redrawBtn");
+        if (currentTurnRedrawUsed || remaining.length <= 1) {
+          redrawBtn.disabled = true;
+          redrawBtn.classList.add("opacity-40", "cursor-not-allowed");
+          document.getElementById("redrawChanceLabel").textContent = "已無重抽機會，請直接收下這支籤！";
+        } else {
+          redrawBtn.disabled = false;
+          redrawBtn.classList.remove("opacity-40", "cursor-not-allowed");
+          document.getElementById("redrawChanceLabel").textContent = "你還有 1 次丟回重抽的機會";
+        }
+      } else {
+        idleBox.classList.remove("hidden");
+        decisionBox.classList.add("hidden");
+        resultBox.classList.add("hidden");
+      }
+    }
+
+    // 渲染 #01 ~ #20 象牙白高對比大卡片
+    function renderCardsGrid(slotArr) {
+      const container = document.getElementById("cardsGrid");
+
+      container.innerHTML = slotArr.map(slot => {
+        // 階段 1：秘密寫提示投籤（隱藏送禮人與提示詞內容）
+        if (state.phase === 1) {
+          const isReady = Boolean(slot.giver && slot.hint);
+          return `
+            <div onclick="window.openEditModal('${slot.id}')"
+              class="card-ivory rounded-2xl p-4 flex items-center justify-between gap-3 cursor-pointer btn-press border-2 ${isReady ? 'border-emerald-700' : 'border-transparent'}">
+              <div class="flex items-center gap-3.5 min-w-0">
+                <span class="w-12 h-12 rounded-xl bg-emerald-950 text-[#f7e7b4] font-black text-lg flex items-center justify-center shrink-0">
+                  #${slot.id}
+                </span>
+                <div class="min-w-0">
+                  <p class="font-black text-base text-emerald-950 truncate">
+                    ${isReady ? '🔒 已完成秘密投籤' : '尚未投籤（點此填寫）'}
+                  </p>
+                  <p class="text-xs text-stone-500 truncate mt-0.5">
+                    ${isReady ? '送禮人與提示詞已保密封存' : '輸入誰送的＋一句話提示（12字內）'}
+                  </p>
+                </div>
+              </div>
+              <span class="shrink-0 text-xs font-black px-3 py-1.5 rounded-xl ${isReady ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-950'}">
+                ${isReady ? '已鎖定' : '填寫'}
+              </span>
+            </div>
+          `;
+        }
+
+        // 階段 3 & 4：大開箱登記禮物與不記名投票
+        const hasGift = Boolean(slot.gift);
+        const isVotedByMe = myVotedSlotId === slot.id;
+        return `
+          <div class="card-ivory rounded-2xl p-4 space-y-3 border-2 ${isVotedByMe ? 'border-[#b91c1c]' : 'border-transparent'}">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3 min-w-0">
+                <span class="w-12 h-12 rounded-xl bg-emerald-950 text-[#f7e7b4] font-black text-lg flex items-center justify-center shrink-0 mt-0.5">
+                  #${slot.id}
+                </span>
+                <div class="min-w-0">
+                  <span class="inline-block text-xs font-bold px-2.5 py-0.5 rounded-lg bg-stone-200 text-stone-800 mb-1">
+                    誰送：${slot.giver ? escapeHtml(slot.giver) : '尚未填寫'}
+                  </span>
+                  <h3 class="text-lg font-black text-stone-900 leading-snug break-words">
+                    ${hasGift ? escapeHtml(slot.gift) : '<span class="text-stone-400 font-bold">尚未登錄禮物內容</span>'}
+                  </h3>
+                </div>
+              </div>
+
+              ${state.phase === 3 ? `
+                <button type="button" onclick="window.openEditModal('${slot.id}')"
+                  class="shrink-0 text-xs font-black px-3.5 py-2 rounded-xl bg-emerald-900 text-[#f7e7b4] shadow btn-press cursor-pointer">
+                  ${hasGift ? '修改' : '填寫禮物'}
+                </button>
+              ` : ''}
+            </div>
+
+            ${state.phase === 4 ? `
+              <div class="pt-2.5 border-t border-stone-200 flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-stone-600">
+                  ${state.revealed ? `獲得 ${slot.votes || 0} 票` : (isVotedByMe ? '✅ 你已投給這份禮物' : '完全不記名・每人限投 1 票')}
+                </span>
+                ${!state.revealed ? `
+                  <button type="button" onclick="window.castVote('${slot.id}')" ${hasVotedThisSession ? 'disabled' : ''}
+                    class="px-4 py-2.5 rounded-xl text-xs font-black transition btn-press ${
+                      isVotedByMe
+                        ? 'bg-[#b91c1c] text-white'
+                        : hasVotedThisSession
+                          ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-[#b91c1c] to-[#991b1b] text-white border border-[#d4af37]/60 shadow cursor-pointer'
+                    }">
+                    ${isVotedByMe ? '已投最爛' : '👎 投它最爛！'}
+                  </button>
+                ` : ''}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join("");
+    }
+
+    // 渲染開票最高票大苦主名單
+    function renderLoserBanner(slotArr) {
+      const maxVotes = Math.max(...slotArr.map(s => s.votes || 0));
+      const loserBox = document.getElementById("loserList");
+      if (maxVotes <= 0) {
+        loserBox.innerHTML = `<p class="text-sm text-red-100 font-bold">目前尚無任何投票紀錄</p>`;
+        return;
+      }
+      const losers = slotArr.filter(s => (s.votes || 0) === maxVotes);
+      loserBox.innerHTML = losers.map(l => `
+        <div class="bg-black/35 rounded-2xl p-3.5 border border-[#f7e7b4]/45">
+          <div class="text-base font-black text-[#f7e7b4]">
+            #${l.id}｜${escapeHtml(l.giver || '神秘送禮人')}（${l.votes} 票）
+          </div>
+          <div class="text-sm font-bold text-white mt-0.5">
+            禮物：${escapeHtml(l.gift || '未填寫')}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // 開啟填寫彈窗
+    window.openEditModal = function(id) {
+      currentEditId = id;
+      const slot = state.slots[id];
+      document.getElementById("modalTitle").textContent = `#${id} 號禮物登記`;
+
+      if (state.phase === 1) {
+        document.getElementById("modalPhase1Fields").classList.remove("hidden");
+        document.getElementById("modalPhase3Fields").classList.add("hidden");
+        // 若已完成秘密投籤則不帶出舊值以保持保密
+        document.getElementById("inputGiver").value = "";
+        document.getElementById("inputHint").value = "";
+      } else {
+        document.getElementById("modalPhase1Fields").classList.add("hidden");
+        document.getElementById("modalPhase3Fields").classList.remove("hidden");
+        document.getElementById("modalHintPreview").textContent = slot.hint || "無";
+        document.getElementById("inputGiverEdit").value = slot.giver || "";
+        document.getElementById("inputGiftName").value = slot.gift || "";
+      }
+      document.getElementById("editModal").classList.remove("hidden");
+    };
+
+    // 儲存填寫資料
+    document.getElementById("modalSaveBtn").addEventListener("click", async () => {
+      if (!currentEditId) return;
+      const slot = state.slots[currentEditId];
+
+      if (state.phase === 1) {
+        const giver = document.getElementById("inputGiver").value.trim();
+        const hint = document.getElementById("inputHint").value.trim();
+        if (!giver || !hint) {
+          showToast("請完整填寫「誰送的」和「一句話提示」！");
+          return;
+        }
+        slot.giver = giver;
+        slot.hint = hint;
+        showToast(`#${currentEditId} 已完成秘密投籤！`);
+      } else {
+        slot.giver = document.getElementById("inputGiverEdit").value.trim();
+        slot.gift = document.getElementById("inputGiftName").value.trim();
+        showToast(`#${currentEditId} 禮物已登記同步！`);
+      }
+
+      document.getElementById("editModal").classList.add("hidden");
+      await persistState();
+    });
+
+    document.getElementById("modalCloseBtn").addEventListener("click", () => {
+      document.getElementById("editModal").classList.add("hidden");
+    });
+
+    // 階段 2：搖一搖抽一支籤
+    document.getElementById("drawTicketBtn").addEventListener("click", () => {
+      const pool = Object.values(state.slots).filter(s => !s.drawn);
+      if (pool.length === 0) {
+        showToast("籤筒已經全部抽完囉！");
+        return;
+      }
+      const icon = document.getElementById("shakerIcon");
+      icon.classList.add("animate-shake");
+      setTimeout(() => {
+        icon.classList.remove("animate-shake");
+        const picked = pool[Math.floor(Math.random() * pool.length)];
+        tempCandidateSlotId = picked.id;
+        renderAll();
+      }, 450);
+    });
+
+    // 階段 2：丟回重抽（限 1 次）
+    document.getElementById("redrawBtn").addEventListener("click", () => {
+      if (currentTurnRedrawUsed) return;
+      const available = Object.values(state.slots).filter(s => !s.drawn);
+      let pool = available.filter(s => s.id !== tempCandidateSlotId);
+      if (pool.length === 0) pool = available;
+
+      currentTurnRedrawUsed = true;
+      const picked = pool[Math.floor(Math.random() * pool.length)];
+      tempCandidateSlotId = picked.id;
+      showToast("已丟回籤筒並重新抽取！");
+      renderAll();
+    });
+
+    // 階段 2：確定收下該支籤並揭曉號碼
+    document.getElementById("confirmTicketBtn").addEventListener("click", async () => {
+      if (!tempCandidateSlotId) return;
+      if (state.slots[tempCandidateSlotId].drawn) {
+        showToast("這支籤剛剛被抽走了，請重新抽取！");
+        tempCandidateSlotId = null;
+        renderAll();
+        return;
+      }
+      state.slots[tempCandidateSlotId].drawn = true;
+      currentTurnWonId = tempCandidateSlotId;
+      tempCandidateSlotId = null;
+      await persistState();
+    });
+
+    // 階段 2：換下一位同事抽籤
+    document.getElementById("nextPersonDrawBtn").addEventListener("click", () => {
+      currentTurnWonId = null;
+      tempCandidateSlotId = null;
+      currentTurnRedrawUsed = false;
+      renderAll();
+    });
+
+    // 階段 4：不記名投票
+    window.castVote = function(id) {
+      if (hasVotedThisSession) return;
+      askConfirm("確認不記名投票", `確定要把唯一的一票投給 #${id} 號嗎？投出後即鎖定無法修改！`, async () => {
+        hasVotedThisSession = true;
+        myVotedSlotId = id;
+        state.slots[id].votes = (state.slots[id].votes || 0) + 1;
+
+        if (!useMemoryMode && voteRecordDocRef && currentUser) {
+          try {
+            await setDoc(voteRecordDocRef, { votedSlotId: id, votedAt: Date.now() });
+          } catch (e) {}
+        }
+        showToast(`已完成不記名投票給 #${id}！`);
+        await persistState();
+      });
+    };
+
+    // 隱藏小聖誕樹主控台開關（密碼：1234）
+    document.getElementById("hostTriggerBtn").addEventListener("click", () => {
+      const panel = document.getElementById("hostPanel");
+      if (!panel.classList.contains("hidden")) {
+        panel.classList.add("hidden");
+        return;
+      }
+      document.getElementById("pwdInput").value = "";
+      document.getElementById("pwdModal").classList.remove("hidden");
+      setTimeout(() => document.getElementById("pwdInput").focus(), 100);
+    });
+
+    document.getElementById("pwdCancelBtn").addEventListener("click", () => {
+      document.getElementById("pwdModal").classList.add("hidden");
+    });
+
+    document.getElementById("pwdConfirmBtn").addEventListener("click", () => {
+      if (document.getElementById("pwdInput").value === HOST_PWD) {
+        document.getElementById("pwdModal").classList.add("hidden");
+        document.getElementById("hostPanel").classList.remove("hidden");
+        showToast("主辦人主控台已解鎖");
+      } else {
+        showToast("密碼錯誤，請重新輸入");
+        document.getElementById("pwdInput").value = "";
+      }
+    });
+
+    document.getElementById("pwdInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") document.getElementById("pwdConfirmBtn").click();
+    });
+
+    document.getElementById("hostCloseBtn").addEventListener("click", () => {
+      document.getElementById("hostPanel").classList.add("hidden");
+    });
+
+    // 主控台切換階段 1~4
+    document.querySelectorAll(".phase-switch-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        state.phase = Number(btn.dataset.setPhase);
+        if (state.phase !== 4) state.revealed = false;
+        currentTurnWonId = null;
+        tempCandidateSlotId = null;
+        currentTurnRedrawUsed = false;
+        await persistState();
+      });
+    });
+
+    // 主控台正式開票揭曉大苦主
+    document.getElementById("revealToggleBtn").addEventListener("click", async () => {
+      state.phase = 4;
+      state.revealed = true;
+      await persistState();
+      if (typeof confetti === "function") {
+        confetti({
+          particleCount: 110,
+          spread: 75,
+          origin: { y: 0.6 },
+          colors: ["#d4af37", "#b91c1c", "#f7e7b4", "#ffffff"]
+        });
+      }
+    });
+
+    // 主控台清空重置
+    document.getElementById("resetAllBtn").addEventListener("click", () => {
+      askConfirm("清空重置確認", "確定要清空全部 20 號資料、票數並回到階段 1 嗎？", async () => {
+        state = { phase: 1, revealed: false, slots: createInitialSlots() };
+        currentTurnWonId = null;
+        tempCandidateSlotId = null;
+        currentTurnRedrawUsed = false;
+        hasVotedThisSession = false;
+        myVotedSlotId = null;
+        if (!useMemoryMode && voteRecordDocRef && currentUser) {
+          try {
+            await setDoc(voteRecordDocRef, { votedSlotId: null });
+          } catch (e) {}
+        }
+        showToast("已清空重置全部資料");
+        await persistState();
+      });
+    });
+
+    // 現場 QR Code 與一鍵複製網址
+    let qrRendered = false;
+    document.getElementById("qrOpenBtn").addEventListener("click", () => {
+      const box = document.getElementById("qrCodeBox");
+      if (!qrRendered && typeof QRCode === "function") {
+        box.innerHTML = "";
+        new QRCode(box, {
+          text: window.location.href,
+          width: 192,
+          height: 192,
+          colorDark: "#0b261b",
+          colorLight: "#ffffff"
+        });
+        qrRendered = true;
+      }
+      document.getElementById("qrModal").classList.remove("hidden");
+    });
+
+    document.getElementById("qrCloseBtn").addEventListener("click", () => {
+      document.getElementById("qrModal").classList.add("hidden");
+    });
+
+    document.getElementById("copyUrlBtn").addEventListener("click", () => {
+      const tempInput = document.createElement("input");
+      tempInput.value = window.location.href;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand("copy");
+        showToast("網址已複製！可直接貼到群組");
+      } catch (e) {
+        showToast("請手動複製瀏覽器網址");
+      }
+      document.body.removeChild(tempInput);
+    });
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, m => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[m]));
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
